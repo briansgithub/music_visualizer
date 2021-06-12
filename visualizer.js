@@ -8,9 +8,10 @@
 //TODO: add a counter for the duration of the song that each pitch class is in the top 10 freqs
 var projectFont;
 
-var songName = "@Hikoukigumo.mp3";
+var songName = "../songs/@simpleGifts2.mp3";
 //TODO: replace BPMs with beat detection/a BPM calculation tool
-var BPM = 88; //Hikoukigumo
+var BPM = 96; //Hikoukigumo
+
 //var BPM = 80; //Champion's Road
 var prevKeySig = 0;
 var keySig = 0;  //TODO: 0 thru 11. Subtracted from the HSB line color to normalize colors to scale degrees;. Add as buttons on the side?
@@ -88,7 +89,7 @@ function preload() {
 
 
 function setup() {
-    createCanvas(800, 600);
+    createCanvas(1200, 600);
     background(0);
     
     slider_smoothVal = createSlider(0, 1, 0.65, 0.01); //TODO: 0.6 is set as the smoothing value, but does not update the FFT object when this value changes
@@ -191,7 +192,7 @@ function draw() {
         stroke(color(noteHue, 100, noteBrightness, 1));
         //stroke(strokeColor(note));
         strokeWeight(5);
-        line((width - 20) / 88 * note, height - 50, (width - 20) / 88 * note, (height - 50) + barHeight);
+        line((width/2 - 20) / 88 * note, height - 50, (width/2 - 20) / 88 * note, (height - 50) + barHeight);
 
 
         textFont(projectFont);
@@ -226,7 +227,7 @@ function draw() {
             default:
                 noteLetter = (note + 8) % 12; //not sure why this is +8, since (note 1) = A = 9. Possibly related to 1st note on piano indexed at 1.
         }
-        text(noteLetter, (width - 20) / 88 * note - 2, height - 37);
+        text(noteLetter, (width/2 - 20) / 88 * note - 2, height - 37);
     }
 
     let spectrumMax = max(currentSpectrum); //loudest volume at this istant
@@ -239,6 +240,11 @@ function draw() {
         }
     }
 
+
+    /*---------------- DRAW REORGANIZED AMPLITUDE GRAPH -------------- */
+
+
+    
     /*--------------------- DRAW AMPLITUDE GRAPH ------------------------*/
     var vol = amp.getLevel();
     amplitudeLog.push(vol);
@@ -298,6 +304,8 @@ function draw() {
 
 function restartSong(){
     background(0);
+    beatRecord = [];
+    amplitudeLog = [];
     song.jump(0); //doesn't work when the song is paused
 
 }
