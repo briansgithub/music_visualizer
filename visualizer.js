@@ -8,9 +8,9 @@
 //TODO: add a counter for the duration of the song that each pitch class is in the top 10 freqs
 var projectFont;
 
-var songName = "../songs/@simpleGifts2.mp3";
+var songName = "../songs/@Hikoukigumo.mp3";
 //TODO: replace BPMs with beat detection/a BPM calculation tool
-var BPM = 96; //Hikoukigumo
+var BPM = 88; //Hikoukigumo
 
 //var BPM = 80; //Champion's Road
 var prevKeySig = 0;
