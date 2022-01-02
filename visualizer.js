@@ -3,20 +3,16 @@
 
 //"use strict";
 //-----------------------------------------------------------------------------
-//TODO: figure out how to slow down the tempo without altering the frequencies of the MP3
-//TODO: darken notes outside of the key signature?
-//TODO: add a counter for the duration of the song that each pitch class is in the top 10 freqs
+
 var projectFont;
 
+var BPM = 0;
+
 var songName = "Hikoukigumo.mp3";
-//TODO: replace BPMs with beat detection/a BPM calculation tool
-var BPM = 88; //Hikoukigumo
 
-//var BPM = 80; //Champion's Road
 var prevKeySig = 0;
-var keySig = 0;  //TODO: 0 thru 11. Subtracted from the HSB line color to normalize colors to scale degrees;. Add as buttons on the side?
-var firstBeatDelay; //TODO: beats won't start until some delay into song. (phase shift). start the beat counter on the first beat
-
+var keySig = 0;  
+var firstBeatDelay; 
 var song;
 var songDuration; 
 var bkgrBrightness = 0;
@@ -88,18 +84,35 @@ function preload() {
 }
 
 
+function updateBPM(){
+    restartSong();
+    BPM = bpm_Input.value();
+    console.log("BPM: " + BPM)
+}
+
+var bpm_PromptText;
+var bpm_input;
+var bpm_Button;
+
 function setup() {
     createCanvas(1200, 600);
     background(0);
+
+    bpm_PromptText = createElement('h3', 'Enter BPM: ');
+    bpm_Input = createInput();
+    bpm_Input.changed(updateBPM);
+
+    bpm_Button = createButton('Enter');
+    bpm_Button.mousePressed('updateBPM');
     
-    slider_smoothVal = createSlider(0, 1, 0.65, 0.01); //TODO: 0.6 is set as the smoothing value, but does not update the FFT object when this value changes
+    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
     slider_Volume = createSlider(0, 2, 0.25, 0.01);
     slider_Speed = createSlider(0, 3, 1, 0.01);
     slider_Pan = createSlider(-1, 1, 0, 0.01);
     slider_barScale = createSlider(0, 4, 1 , 0.01);
     slider_exaggerationExponent = createSlider(0, 7, 1, 0.01);
 
-    /* //TODO: make labels for the DOM elments, like sliders
+    /* 
     
     textFont(calibri);
     noStroke();
@@ -108,7 +121,6 @@ function setup() {
     text("Bar Scale", slider_barScale.width, height-10);
     console.log(slider_barScale.x);*/
 
-    song.play();
     songDuration = song.duration();
 
     button_Toggle = createButton("play/pause");
@@ -147,7 +159,7 @@ function setup() {
     button_B.mousePressed(keySig11);
     button_Cs.mousePressed(keySig1);
 
-    fft = new p5.FFT(slider_smoothVal.value(), Math.pow(2, 12)); //TODO: How does the number of bins affect the logic and graphics? It definitely affects the resolution of the lower frequency ranges. 12 seems like a good value.
+    fft = new p5.FFT(slider_smoothVal.value(), Math.pow(2, 12));
     amp = new p5.Amplitude();
     console.log(song);
 
@@ -295,19 +307,16 @@ function draw() {
     }
 
     prevBeatNo = beatNo;
-    //TODO: update beat colors to match global key sig
-    //console.log(Math.trunc(song.currentTime() / (60 / BPM)));
-    //TODO scale width of bar to depend on the BPM
-
+        //console.log(Math.trunc(song.currentTime() / (60 / BPM)));
+    
 }
 
 
 function restartSong(){
     background(0);
+    song.jump(0); //doesn't work when the song is paused
     beatRecord = [];
     amplitudeLog = [];
-    song.jump(0); //doesn't work when the song is paused
-
 }
 
 function toggleSong() {
