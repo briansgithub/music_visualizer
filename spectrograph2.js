@@ -33,7 +33,7 @@ function setup() {
   noStroke();
   colorMode(HSB);
 
-  // make canvas drag'n'dropablle with gotFile as the callback
+  //make canvas drag'n'dropablle with gotFile as the callback
   //makeDragAndDrop(cnv, gotFile);
 
   soundFile = loadSound('Hikoukigumo.mp3');
