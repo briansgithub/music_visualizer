@@ -5,11 +5,11 @@
 //-----------------------------------------------------------------------------
 
 var projectFont;
-
-var BPM = 0;
-
+var dropzone; 
+var mic;
 var songName = "Hikoukigumo.mp3";
 
+var BPM = 0;
 var prevKeySig = 0;
 var keySig = 0;  
 var firstBeatDelay; 
@@ -79,9 +79,14 @@ IF 't' is pressed, call bpmCalc function
 
 function preload() {
     song = loadSound(songName);
-   // song.reversed = true;
-   projectFont = loadFont('Calibri.ttf');
+
+    // song.reversed = true;
+    projectFont = loadFont('Calibri.ttf');
+
+   
+
 }
+
 
 
 function updateBPM(){
@@ -94,9 +99,36 @@ var bpm_PromptText;
 var bpm_input;
 var bpm_Button;
 
+function highlightDropzone() {
+    dropzone.style('background-color', '#ccc');
+}
+function unhighlightDropzone() {
+    dropzone.style('background-color', '#fff');
+}
+
+function implementDragAndDrop(dropzone, callbackFunc) {
+    var domEl = document.getElementById(dropzone.elt.id);
+    console.log(domEl);
+    domEl.drop(callbackFunc, unhighlightDropzone);
+}
+
+function processFile(songFile) {
+    song.dispose();
+    song = loadSound(songFile);
+
+    createP(songFile.type + " " + songFile.name + " " + songFile.size);
+    console.log(song);
+}
+
 function setup() {
     createCanvas(1200, 600);
     background(0);
+
+    dropzone = select('#dropzoneID');
+    dropzone.dragOver(highlightDropzone);
+    dropzone.dragLeave(unhighlightDropzone);
+
+    implementDragAndDrop(dropzone, processFile);
 
     bpm_PromptText = createElement('h3', 'Enter BPM: ');
     bpm_Input = createInput();
