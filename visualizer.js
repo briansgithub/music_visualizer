@@ -9,7 +9,7 @@ var dropzone;
 var mic;
 var songName = "Hikoukigumo.mp3";
 
-var BPM = 0;
+var BPM = 88;
 var prevKeySig = 0;
 var keySig = 0;  
 var firstBeatDelay; 
