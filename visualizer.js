@@ -1,5 +1,5 @@
-/// <reference path="../TSDef/p5.global-mode.d.ts" />
-/// <reference path="../addons/p5.sound.js" />
+/// <reference path="./TSDef/p5.global-mode.d.ts" />
+/// <reference path="./addons/p5.sound.js" />
 
 //"use strict";
 //-----------------------------------------------------------------------------
