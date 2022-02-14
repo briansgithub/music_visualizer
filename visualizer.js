@@ -17,7 +17,9 @@ var song;
 var songDuration; 
 var bkgrBrightness = 0;
 var fft;
-//var smoothVal = 0.5; // REPLACED with slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
+var smoothVal = 0.5; 
+//REPLACED with slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
+//nvm...slider didn't work
 
 var amp;
 var prevBeatNo = 0;
@@ -37,9 +39,9 @@ function BeatRectangle(xPosition, loudestPitchClass, initKeySig)  {
 }
 
 var slider_smoothVal;
-var slider_Volume;
-var slider_Speed;
-var slider_Pan;
+//var slider_Volume;
+//var slider_Speed;
+//var slider_Pan;
 var button_Toggle;
 var button_Restart;
 var slider_barScale; // used to linearly scale bars
@@ -106,9 +108,9 @@ function setup() {
     bpm_Button.mousePressed('updateBPM');
     
     slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
-    slider_Volume = createSlider(0, 2, 0.25, 0.01);
-    slider_Speed = createSlider(0, 3, 1, 0.01);
-    slider_Pan = createSlider(-1, 1, 0, 0.01);
+//    slider_Volume = createSlider(0, 2, 0.25, 0.01);
+//    slider_Speed = createSlider(0, 3, 1, 0.01);
+//    slider_Pan = createSlider(-1, 1, 0, 0.01);
     slider_barScale = createSlider(0, 4, 1 , 0.01);
     slider_exaggerationExponent = createSlider(0, 7, 1, 0.01);
 
@@ -159,7 +161,7 @@ function setup() {
     button_B.mousePressed(keySig11);
     button_Cs.mousePressed(keySig1);
 
-    fft = new p5.FFT(slider_smoothVal.value(), Math.pow(2, 12));
+    fft = new p5.FFT(smoothVal, Math.pow(2, 12));
     amp = new p5.Amplitude();
     console.log(song);
 
@@ -169,9 +171,9 @@ function setup() {
 function draw() {
     background(bkgrBrightness);
 
-    song.setVolume(slider_Volume.value());
-    song.rate(slider_Speed.value());
-    song.pan(slider_Pan.value());
+//    song.setVolume(slider_Volume.value());
+//    song.rate(slider_Speed.value());
+//    song.pan(slider_Pan.value());
 
     var spectrum = fft.analyze();
 
