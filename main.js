@@ -4,33 +4,33 @@
 //"use strict";
 //-----------------------------------------------------------------------------
 
-var projectFont;
+let projectFont;
 
-var BPM = 0;
+let BPM = 0;
 
-var songName = "Hikoukigumo.mp3";
+let songName = "Hikoukigumo.mp3";
 
-var prevKeySig = 0;
-var keySig = 0;  
-var firstBeatDelay; 
-var song;
-var songDuration; 
-var bkgrBrightness = 0;
-var fft;
-var smoothVal = 0.5; 
+let prevKeySig = 0;
+let keySig = 0;  
+let firstBeatDelay; 
+let song;
+let songDuration; 
+let bkgrBrightness = 0;
+let fft;
+let smoothVal = 0.5; 
 //REPLACED with slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
 //nvm...slider didn't work
 
-var amp;
-var prevBeatNo = 0;
-var beatNo = 0;
-var beatRecord = new Array(); // log of all the beatRectangle objects
+let amp;
+let prevBeatNo = 0;
+let beatNo = 0;
+let beatRecord = new Array(); // log of all the beatRectangle objects
 function BeatRectangle(xPosition, loudestPitchClass, initKeySig)  {
     this.xPosition = xPosition;
     this.loudestPitchClass = loudestPitchClass;
     this.initKeySig = initKeySig;
     this.displayBeat = function() {
-        var updatedColorHue = (360 / 12)*((this.loudestPitchClass + keySig) % 12); //no +8 because "loudestNotePitch" normalized for C = 0
+        let updatedColorHue = (360 / 12)*((this.loudestPitchClass + keySig) % 12); //no +8 because "loudestNotePitch" normalized for C = 0
         colorMode(HSB);
         noStroke();
         fill(updatedColorHue, 100, 100, 1);
@@ -38,32 +38,32 @@ function BeatRectangle(xPosition, loudestPitchClass, initKeySig)  {
     }
 }
 
-var slider_smoothVal;
-//var slider_Volume;
-//var slider_Speed;
-//var slider_Pan;
-var button_Toggle;
-var button_Restart;
-var slider_barScale; // used to linearly scale bars
-var slider_exaggerationExponent; //used as a power to make tall bars taller and short bars shorter.
+let slider_smoothVal;
+//let slider_Volume;
+//let slider_Speed;
+//let slider_Pan;
+let button_Toggle;
+let button_Restart;
+let slider_barScale; // used to linearly scale bars
+let slider_exaggerationExponent; //used as a power to make tall bars taller and short bars shorter.
 
-var amplitudeLog = [];
-var currentSpectrum = []; //88 notes with freq values of notes being played right now.
+let amplitudeLog = [];
+let currentSpectrum = []; //88 notes with freq values of notes being played right now.
 
-var button_Cb;
-var button_Gb;
-var button_Db;
-var button_Ab;
-var button_Eb;
-var button_Bb;
-var button_F;
-var button_C;
-var button_G;
-var button_D;
-var button_A;
-var button_E;
-var button_B;
-var button_Cs;
+let button_Cb;
+let button_Gb;
+let button_Db;
+let button_Ab;
+let button_Eb;
+let button_Bb;
+let button_F;
+let button_C;
+let button_G;
+let button_D;
+let button_A;
+let button_E;
+let button_B;
+let button_Cs;
 
 
 /*PSEUDOCODE:
@@ -92,9 +92,9 @@ function updateBPM(){
     console.log("BPM: " + BPM)
 }
 
-var bpm_PromptText;
-var bpm_input;
-var bpm_Button;
+let bpm_PromptText;
+let bpm_input;
+let bpm_Button;
 
 function setup() {
     createCanvas(1200, 600);
@@ -180,14 +180,18 @@ function draw() {
     /*--------------------- DRAW PIANO FREQUENCIES ------------------------*/
     //Note corresponds to note on piano, STARTING AT 1 = A. 
 
-    for (var note = 1; note <= 88; note++) { //note will conventionally always assume starting indexing at 1 in this block. 
-        var noteFreq = noteToFreq_(note); //Math.pow(Math.pow(2, 1 / 12), note - 49) * 440; underscore b/c "noteToFreq" is used somewhere in backend code
-        //50 cents == 1/2 semitone
-        //2 root 12 divides the octave into 12 semitones. 2 root 120 divides octave into 120 tones. 
-        var noteSub50Cents = 440 * Math.pow(Math.pow(2, 1 / 120), 10 * (note - 49) - 5); //Hz
-        var notePlus50Cents = 440 * Math.pow(Math.pow(2, 1 / 120), 10 * (note - 49) + 5); //Hz
+    for (let note = 1; note <= 88; note++) { //note will conventionally always assume starting indexing at 1 in this block. 
+        let noteFreq = noteToFreq_(note); //Math.pow(Math.pow(2, 1 / 12), note - 49) * 440; underscore b/c "noteToFreq" is alrady defined somewhere in backend library code
+        /*
+        1 semitone == 100 cents ; 50 cents == 1/2 semitone
+        2 root 12 divides the octave into 12 semitones. 
+        2 root 1200 divides octave into 1200 tones (each semitone is divided into 100 smaller tones, so +/-50 1200-tones is +/-50 cents)
+        (2-root-120)^(1200-tones)
+        */
+        var noteSub50Cents = 440 * Math.pow(Math.pow(2, 1 / 1200), 100 * (note - 49) - 50); //Hz
+        var notePlus50Cents = 440 * Math.pow(Math.pow(2, 1 / 1200), 100 * (note - 49) + 50); //Hz
 
-        var freqVol = fft.getEnergy(noteSub50Cents, notePlus50Cents); // get the total energy +- 5 cents around desired note
+        var freqVol = fft.getEnergy(noteSub50Cents, notePlus50Cents); // get the total energy +- 50 cents around desired note
         currentSpectrum[note - 1] = freqVol;
 
         var freqVolScaled = freqVol;
@@ -215,6 +219,7 @@ function draw() {
         fill('white');
         textSize(7);
 
+        /*--- Draw the note labels ---*/
         var noteLetter;
         switch ((note + 8) % 12) {
             case 0:
@@ -245,7 +250,7 @@ function draw() {
     }
 
     let spectrumMax = max(currentSpectrum); //loudest volume at this istant
-    var loudestNotePitch; //loudest frequency at this instant
+    let loudestNotePitch; //loudest frequency at this instant
     for (let i = 0; i <= 87; i++) { //search the currentSpectrum for the loudest pitch
         if (currentSpectrum[i] == spectrumMax) {
             loudestNotePitch = (i + 9) % 12; //i indexes at 0, whereas "note" indexes at 1
@@ -293,7 +298,7 @@ function draw() {
     colorMode(HSB);
 
     let currentColor;
-    beatNo = Math.trunc(song.currentTime() / (60 / BPM));
+    beatNo = Math.trunc(song.currentTime() / (60/BPM));
     
     if (beatNo != prevBeatNo) {
         beatRecord.push(new BeatRectangle(songPos, loudestNotePitch, keySig));
