@@ -183,7 +183,7 @@ IF 't' is pressed, call bpmCalc function
 function preload() {
     song = loadSound(songName);
    // song.reversed = true;
-   projectFont = loadFont('/assets/Calibri.ttf');
+   projectFont = loadFont('Calibri.ttf');
 }
 
 
