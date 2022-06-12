@@ -115,27 +115,30 @@ function drawLegend() {
     stroke('black');
     strokeWeight(2);
     fill('white');
-    let legendX = (19 / 20) * width;
-    let legendY = height / 3;
-    let legendWidth = width / 20;
-    let legendHeight = height / 3;
-    let legendBackground = rect(legendX, legendY, legendWidth, legendHeight);
+    let legendXPos = width/ 6; 
+    let legendYPos =(19 / 20) * height; 
+    let legendWidth = width / 6;
+    let legendHeight =height/ 20; 
+    rectMode(CORNER);
+    let legendBackground = rect(legendXPos, legendYPos, legendWidth, legendHeight);
 
     stroke('black');
     strokeWeight(1);
 
-    let swatchSize = legendHeight / 16;
+    let swatchSize = legendHeight / 3;
     textSize(swatchSize);
-    for (let i = 0; i < 12; i++) {
-        let swatchX = legendX + (1 / 24) * legendHeight;
-        let swatchY = legendY + (1 / 13) * legendHeight * i + legendHeight / 24;
+    let numTones = 12;
+    for (let i = 0; i < numTones; i++) {
+        let swatchXPos =  legendXPos +  i*legendWidth/(numTones) + legendWidth/(numTones*2);
+        let swatchYPos = legendYPos + (2/3)*legendHeight;
         let noteHue = (360 / 12) * mod(i, 12); 
+        rectMode(CENTER);
         fill(noteHue,100,100);
-        rect(swatchX, swatchY, swatchSize);
+        rect(swatchXPos, swatchYPos, swatchSize);
 
         fill('black');
-        textAlign(LEFT, TOP);
-        text(numToSymbol(mod(i-globalKeySigOffset,12)), swatchX + 1.5 * swatchSize, swatchY);
+        textAlign(CENTER, CENTER);
+        text(numToSymbol(mod(i-globalKeySigOffset,12)), swatchXPos , swatchYPos - 1.25 * swatchSize);
     }
 }
 
@@ -335,6 +338,7 @@ function draw() {
         stroke(color(noteHue, 100, noteBrightness, 1));
         //stroke(strokeColor(note));
         strokeWeight(5);
+        //TODO: Line/bar positions should be drawn without the use of magic numbers
         line((width / 2 - 20) / 88 * note, height - 50, (width / 2 - 20) / 88 * note, (height - 50) + barHeight);
         /*--------------------- END DRAW PIANO FREQUENCIES ------------------------*/
 
