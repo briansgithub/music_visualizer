@@ -2,11 +2,14 @@
 // <reference path="./TSDef/p5.global-mode.d.ts" />
 
 //"use strict";
+
+
 //-----------------------------------------------------------------------------
 
 /*
     Hungarian variable naming notation is used with snake case separating [type]_[identifier] and camelCase used for [identifier]
 */
+
 
 /* mod redefinition needed because javascript % operator returns negative integers (not positive) for negative dividends */
 function mod(n, m) {
@@ -75,6 +78,7 @@ let prevBeatNo = 0;
 let beatNo = 0;
 let beatRecord = []; // log of all the beatRectangle objects
 
+let maxHSBValue = 300;
 const enum_colorScheme = Object.freeze({
     linearChromatic: 0,
     circleOfFifths: 1,
@@ -89,7 +93,7 @@ function BeatRectangle(xPosition, loudestPitchClass, initKeySig)  {
     this.initKeySig = initKeySig;
 
     this.displayBeat = function() {
-        let updatedColorHue = (360 / 12)*mod(this.loudestPitchClass + globalKeySigOffset, 12); //no +kbShift because "loudestPitchClass" normalized for C = 0
+        let updatedColorHue = (maxHSBValue / 12)*mod(this.loudestPitchClass + globalKeySigOffset, 12); //no +kbShift because "loudestPitchClass" normalized for C = 0
         colorMode(HSB);
         noStroke();
         fill(updatedColorHue, 100, 100, 1);
@@ -115,31 +119,65 @@ function drawLegend() {
     stroke('black');
     strokeWeight(2);
     fill('white');
-    let legendX = (19 / 20) * width;
-    let legendY = height / 3;
-    let legendWidth = width / 20;
-    let legendHeight = height / 3;
-    let legendBackground = rect(legendX, legendY, legendWidth, legendHeight);
+    let legendXPos = width/ 6; 
+    let legendYPos =(19 / 20) * height; 
+    let legendWidth = width / 6;
+    let legendHeight =height/ 20; 
+    rectMode(CORNER);
+    let legendBackground = rect(legendXPos, legendYPos, legendWidth, legendHeight);
 
     stroke('black');
     strokeWeight(1);
 
-    let swatchSize = legendHeight / 16;
+    let swatchSize = legendHeight / 3;
     textSize(swatchSize);
-    for (let i = 0; i < 12; i++) {
-        let swatchX = legendX + (1 / 24) * legendHeight;
-        let swatchY = legendY + (1 / 13) * legendHeight * i + legendHeight / 24;
-        let noteHue = (360 / 12) * mod(i, 12); 
-        fill(noteHue,100,100);
-        rect(swatchX, swatchY, swatchSize);
+    let numTones = 12;
+    for (let i = 0; i < numTones; i++) {
+        let swatchXPos = legendXPos + i * legendWidth / (numTones) + legendWidth / (numTones * 2);
+        let swatchYPos = legendYPos + (2 / 3) * legendHeight;
+
+        let noteHue;
+        switch (radio_colorScheme.value()) {
+            case "enum_colorScheme.linearChromatic":
+                noteHue = colorByLinearChromatic(i);
+                break;
+            case "enum_colorScheme.circleOfFifths":
+                noteHue = colorByCircleOfFifths(i);
+                break;
+            case "enum_colorScheme.consonanceOrder":
+                noteHue = colorByConsonanceOrder(i);
+                break;
+            default:
+                noteHue = 0;
+        }
+        
+
+        rectMode(CENTER);
+        fill(noteHue, 100, 100);
+        rect(swatchXPos, swatchYPos, swatchSize);
 
         fill('black');
-        textAlign(LEFT, TOP);
-        text(numToSymbol(mod(i-globalKeySigOffset,12)), swatchX + 1.5 * swatchSize, swatchY);
+        textAlign(CENTER, CENTER);
+        text(numToSymbol(mod(i - globalKeySigOffset, 12)), swatchXPos, swatchYPos - 1.25 * swatchSize);
     }
     rectMode(CORNER);
 
 }
+
+function colorByLinearChromatic(note) {
+    return (maxHSBValue / 12) * note; //HSB(0,100,100,1) is red. 
+}
+
+function colorByCircleOfFifths(note) {
+
+    return maxHSBValue;
+}
+
+function colorByConsonanceOrder(note){
+    let noteSortedIndex = intervalsOrderedByConsonance[note];
+    return (maxHSBValue / 12) * noteSortedIndex;
+}
+
 
 let slider_smoothVal;
 //let slider_Volume;
@@ -203,7 +241,6 @@ let checkbox_beatDetect;
 function setup() {
     createCanvas(1200, 600);
     background(bkgrBrightness);
-
     songDuration = song.duration();
 
     button_Toggle = createButton("play/pause");
@@ -211,6 +248,10 @@ function setup() {
 
     button_Restart = createButton("restart song");
     button_Restart.mousePressed(restartSong);
+
+    createElement('h4', 'Amplitude Difference Exaggeration and Linear Scaling sliders:');
+    slider_exaggerationExponent = createSlider(0, 7, 1, 0.01);
+    slider_barScale = createSlider(0, 4, 1 , 0.01);
 
     createElement('h4', 'Enter BPM: ');
     checkbox_beatDetect = createCheckbox('automatic beat detection (not yet implemented)', false);
@@ -233,7 +274,7 @@ function setup() {
 
 
     createElement('h4', 'Select a key signature:');
-    document.createElement('test');
+    checkbox_dimAccidentals = createCheckbox('Dim accidentals (not yet implemented)', true);
     button_Cb = createButton("Cb");
     button_Gb = createButton("Gb");
     button_Db = createButton("Db");
@@ -264,17 +305,14 @@ function setup() {
     button_B.mousePressed(keySig11);
     button_Cs.mousePressed(keySig1);
 
-    createElement('h4', 'Color Scheme: (not yet implemented)');
+    createElement('h4', 'Color Scheme:');
     radio_colorScheme = createRadio();
     radio_colorScheme.option('enum_colorScheme.linearChromatic', 'Linear, chromatic');
     radio_colorScheme.option('enum_colorScheme.circleOfFifths', 'Circle of 5ths');
     radio_colorScheme.option('enum_colorScheme.consonanceOrder', 'Consonance order');
     radio_colorScheme.selected('enum_colorScheme.linearChromatic');
 
-
-    createElement('h4', 'Amplitude Difference Exaggeration and Linear Scaling sliders:');
-    slider_exaggerationExponent = createSlider(0, 7, 1, 0.01);
-    slider_barScale = createSlider(0, 4, 1 , 0.01);
+//amplitude sliders location
 
     createElement('h4', 'Smoothing slider (broken): ');
     slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
@@ -329,8 +367,19 @@ function draw() {
 
 
         colorMode(HSB);
-
-        let noteHue = (360 / 12) * normalizeNote(note + globalKeySigOffset); //HSB(0,100,100,1) is red. 
+        let noteHue;
+        let normalizedNote = normalizeNote(note + globalKeySigOffset);
+        
+        switch (radio_colorScheme.value()) {
+            case "enum_colorScheme.linearChromatic":
+                noteHue = colorByLinearChromatic(normalizedNote);
+                break;
+            case "enum_colorScheme.consonanceOrder":
+                noteHue = colorByConsonanceOrder(normalizedNote);
+                break;
+            default:
+                noteHue = 0;
+        }
 
         let noteBrightness = map(Math.log2(freqVol), 0, 8, 0, 100); //freqVol ranges from 0 to 255
 
@@ -455,18 +504,15 @@ function toggleSong() {
         song.play();
     }
 }
-
-function noteToFreq_(note){
-   return ( 440*Math.pow(Math.pow(2, 1/12), note - 49) );
+function noteToFreq_(note) {
+    return (440 * Math.pow(Math.pow(2, 1 / 12), note - 49));
 }
-
 //I don't know why there's a 12-n, 5*n, 12-n, 5*n,... pattern
 // 5*n = -7*n in mod_12. Is the modular arithmetic in the color expression going in reverse...?
 // for odd number of accidentals, usually 6+
 // odd accidentals  are normally their respective note number -6.
 // even accidentals are normally the same number as their respective note between notes 0 thru 6
 // even accidentals are normally 12 - the number of their respective note between notes 6 thru 12
-
 function keySig0() { //C
     prevKeySig = globalKeySigOffset;
     globalKeySigOffset = 0;
@@ -515,6 +561,21 @@ function toggleBeatDetection() {
         //disable beat detection
     }
   }
+
+  let intervalRatios = [1/1, 16/15, 9/8, 6/5, 5/4, 4/3, 45/32, 3/2, 8/5, 5/3, 9/5, 15/8];
+  let intervalsOrderedByConsonance= [0, 10, 8, 5, 4, 2, 11, 1, 6, 3, 7, 9]; 
+
+  /*
+    COF := Circle of Fifths
+    x is solution to linear congruence equation 7*x = n (mod 12)
+    x := # of accidentals (from 0-11, must be shifted to range -6 to +6)
+    n := note index
+    Solutions hardcoded as array. This can be generalized using the linear congruence
+    for 7 and 12 as arbitrary constants a and n
+  */
+  let intervalsOrderedByCOF= []; 
+
+  //TODO: 2 arrays for numerator and denominator and generalize to n tones by sorting by LCM(num,denom)
 
 /* DISPLAY THE FREQUENCY SPECTRUM
     var spectrum = fft.analyze();
