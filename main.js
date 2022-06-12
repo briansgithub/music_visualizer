@@ -137,6 +137,8 @@ function drawLegend() {
         textAlign(LEFT, TOP);
         text(numToSymbol(mod(i-globalKeySigOffset,12)), swatchX + 1.5 * swatchSize, swatchY);
     }
+    rectMode(CORNER);
+
 }
 
 let slider_smoothVal;
