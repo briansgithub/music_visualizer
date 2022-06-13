@@ -93,7 +93,8 @@ function BeatRectangle(xPosition, loudestPitchClass, initKeySig)  {
     this.initKeySig = initKeySig;
 
     this.displayBeat = function() {
-        let updatedColorHue = (maxHSBValue / 12)*mod(this.loudestPitchClass + globalKeySigOffset, 12); //no +kbShift because "loudestPitchClass" normalized for C = 0
+        let normalizedNote =mod(this.loudestPitchClass + globalKeySigOffset, 12) //no +kbShift because "loudestPitchClass" normalized for C = 0
+        let updatedColorHue = applyColorScheme(normalizedNote); //marker
         colorMode(HSB);
         noStroke();
         fill(updatedColorHue, 100, 100, 1);
@@ -136,20 +137,8 @@ function drawLegend() {
         let swatchXPos = legendXPos + i * legendWidth / (numTones) + legendWidth / (numTones * 2);
         let swatchYPos = legendYPos + (2 / 3) * legendHeight;
 
-        let noteHue;
-        switch (radio_colorScheme.value()) {
-            case "enum_colorScheme.linearChromatic":
-                noteHue = colorByLinearChromatic(i);
-                break;
-            case "enum_colorScheme.circleOfFifths":
-                noteHue = colorByCircleOfFifths(i);
-                break;
-            case "enum_colorScheme.consonanceOrder":
-                noteHue = colorByConsonanceOrder(i);
-                break;
-            default:
-                noteHue = 0;
-        }
+        let noteHue = applyColorScheme(i);
+    
         
 
         rectMode(CENTER);
@@ -168,16 +157,33 @@ function colorByLinearChromatic(note) {
     return (maxHSBValue / 12) * note; //HSB(0,100,100,1) is red. 
 }
 
-function colorByCircleOfFifths(note) {
-
-    return maxHSBValue;
-}
-
-function colorByConsonanceOrder(note){
+function colorByConsonanceOrder(note) {
     let noteSortedIndex = intervalsOrderedByConsonance[note];
     return (maxHSBValue / 12) * noteSortedIndex;
 }
 
+function colorByCircleOfFifths(note) {
+    return maxHSBValue;
+}
+
+function applyColorScheme(pitchClass) {
+
+    switch (radio_colorScheme.value()) {
+        case "enum_colorScheme.linearChromatic":
+            noteHue = colorByLinearChromatic(pitchClass);
+            break;
+        case "enum_colorScheme.circleOfFifths":
+            noteHue = colorByCircleOfFifths(pitchClass);
+            break;
+        case "enum_colorScheme.consonanceOrder":
+            noteHue = colorByConsonanceOrder(pitchClass);
+            break;
+        default:
+            noteHue = 0;
+    }
+
+    return noteHue;
+}
 
 let slider_smoothVal;
 //let slider_Volume;
@@ -274,7 +280,6 @@ function setup() {
 
 
     createElement('h4', 'Select a key signature:');
-    checkbox_dimAccidentals = createCheckbox('Dim accidentals (not yet implemented)', true);
     button_Cb = createButton("Cb");
     button_Gb = createButton("Gb");
     button_Db = createButton("Db");
@@ -306,6 +311,7 @@ function setup() {
     button_Cs.mousePressed(keySig1);
 
     createElement('h4', 'Color Scheme:');
+    checkbox_dimAccidentals = createCheckbox('Dim accidentals (not yet implemented)', true);
     radio_colorScheme = createRadio();
     radio_colorScheme.option('enum_colorScheme.linearChromatic', 'Linear, chromatic');
     radio_colorScheme.option('enum_colorScheme.circleOfFifths', 'Circle of 5ths');
@@ -370,16 +376,9 @@ function draw() {
         let noteHue;
         let normalizedNote = normalizeNote(note + globalKeySigOffset);
         
-        switch (radio_colorScheme.value()) {
-            case "enum_colorScheme.linearChromatic":
-                noteHue = colorByLinearChromatic(normalizedNote);
-                break;
-            case "enum_colorScheme.consonanceOrder":
-                noteHue = colorByConsonanceOrder(normalizedNote);
-                break;
-            default:
-                noteHue = 0;
-        }
+        noteHue = applyColorScheme(normalizedNote);
+        
+       
 
         let noteBrightness = map(Math.log2(freqVol), 0, 8, 0, 100); //freqVol ranges from 0 to 255
 
