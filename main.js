@@ -56,6 +56,81 @@ function numToSymbol(noteNumber) {
     return noteSymbol
 }
 
+function numToScaleDegree(noteNumber) {
+    let noteSymbol;
+    switch (noteNumber) {
+        case 0:
+            noteSymbol = '1';
+            break;
+        case 2:
+            noteSymbol = '2';
+            break;
+        case 4:
+            noteSymbol = '3';
+            break;
+        case 5:
+            noteSymbol = '4';
+            break;
+        case 7:
+            noteSymbol = '5';
+            break;
+        case 9:
+            noteSymbol = '6';
+            break;
+        case 11:
+            noteSymbol = '7';
+            break;
+        default:
+            noteSymbol = "";
+    }
+    return noteSymbol
+}
+
+function rootToKeySigSymbol(root) {
+    let noteSymbol;
+    switch (root) {
+        case 0:
+            noteSymbol = 'C';
+            break;
+        case 1:
+            noteSymbol = 'Db';
+            break;
+        case 2:
+            noteSymbol = 'D';
+            break;
+        case 3:
+            noteSymbol = 'Eb';
+            break;
+        case 4:
+            noteSymbol = 'E';
+            break;
+        case 5:
+            noteSymbol = 'F';
+            break;
+        case 6:
+            noteSymbol = 'F#';
+            break;
+        case 7:
+            noteSymbol = 'G';
+            break;
+        case 8:
+            noteSymbol = 'Ab';
+            break;
+        case 9:
+            noteSymbol = 'A';
+            break;
+        case 10:
+            noteSymbol = 'Bb';
+            break;
+        case 11:
+            noteSymbol = 'B';
+            break;
+        default:
+            noteSymbol = root;
+    }
+    return noteSymbol
+}
+
 let projectFont;
 
 let songName = "Hikoukigumo.mp3";
@@ -63,7 +138,7 @@ let BPM = 88;
 
 
 let prevKeySig = 0;
-let globalKeySigOffset = 0;
+let globalKeySigRoot = 0;
 let firstBeatDelay;
 let song;
 let songDuration; 
@@ -79,26 +154,30 @@ let beatNo = 0;
 let beatRecord = []; // log of all the beatRectangle objects
 
 let maxHSBValue = 300;
-const enum_colorScheme = Object.freeze({
-    linearChromatic: 0,
-    circleOfFifths: 1,
-    consonanceOrder: 2
-})
 
+
+
+let radio_noteLabelingConvention;
 let radio_colorScheme;
 /* Beat rectangle constructor? */
-function BeatRectangle(xPosition, loudestPitchClass, initKeySig)  {
+function BeatRectangle(xPosition, loudestPitchClass)  {
     this.xPosition = xPosition;
     this.loudestPitchClass = loudestPitchClass;
-    this.initKeySig = initKeySig;
 
-    this.displayBeat = function() {
-        let normalizedNote =mod(this.loudestPitchClass + globalKeySigOffset, 12) //no +kbShift because "loudestPitchClass" normalized for C = 0
-        let updatedColorHue = applyColorScheme(normalizedNote); //marker
+    this.displayBeat = function () {
+        let normalizedNote = mod(this.loudestPitchClass - globalKeySigRoot, 12) //no +kbShift because "loudestPitchClass" normalized for C = 0
         colorMode(HSB);
         noStroke();
-        fill(updatedColorHue, 100, 100, 1);
-        rect(this.xPosition, 7, width/(songDuration/(60/BPM)), height/3-7);
+
+        let updatedColorHue = applyColorScheme(normalizedNote); //marker
+        let noteSaturation = 100;
+        let alpha = 1;
+        if(checkbox_dimAccidentals.checked() && accidentalIntervals.includes(normalizedNote)){
+            noteSaturation = 0;
+            alpha = .15;
+        }
+        fill(updatedColorHue, noteSaturation, 100, alpha);
+        rect(this.xPosition, 7, width / (songDuration / (60 / BPM)), height / 3 - 7);
     }
 }
 
@@ -120,34 +199,62 @@ function drawLegend() {
     stroke('black');
     strokeWeight(2);
     fill('white');
-    let legendXPos = width/ 6; 
-    let legendYPos =(19 / 20) * height; 
-    let legendWidth = width / 6;
-    let legendHeight =height/ 20; 
+    const legendXPos = width / 6;
+    const legendYPos = (19 / 20) * height;
+    const legendWidth = width / 6;
+    const legendHeight = height / 20;
     rectMode(CORNER);
     let legendBackground = rect(legendXPos, legendYPos, legendWidth, legendHeight);
+
+    /*----- Draw Key Signature Label -----*/
+    const keySigXPos = legendXPos - legendHeight;
+    rect(keySigXPos, legendYPos, legendHeight); 
+    textSize(.5 * legendHeight);
+    strokeWeight(0);
+    textAlign(CENTER, CENTER);
+    fill('black');
+    text(rootToKeySigSymbol(globalKeySigRoot), keySigXPos + legendHeight / 2, legendYPos + legendHeight / 2); 
+    /*----- End Draw Key Signature Label -----*/
 
     stroke('black');
     strokeWeight(1);
 
     let swatchSize = legendHeight / 3;
-    textSize(swatchSize);
+    textSize(swatchSize - .5);
     let numTones = 12;
     for (let i = 0; i < numTones; i++) {
         let swatchXPos = legendXPos + i * legendWidth / (numTones) + legendWidth / (numTones * 2);
         let swatchYPos = legendYPos + (2 / 3) * legendHeight;
 
         let noteHue = applyColorScheme(i);
-    
-        
+        let noteSaturation = 100;
+        let noteBrightness = 100;
+        let alpha = 1;
+        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(i)) {
+            noteSaturation = 0;
+            noteBrightness = 25;
+        }
 
+        fill(noteHue, noteSaturation, noteBrightness, alpha);
         rectMode(CENTER);
-        fill(noteHue, 100, 100);
         rect(swatchXPos, swatchYPos, swatchSize);
 
         fill('black');
         textAlign(CENTER, CENTER);
-        text(numToSymbol(mod(i - globalKeySigOffset, 12)), swatchXPos, swatchYPos - 1.25 * swatchSize);
+        const textHeight = swatchYPos - 1.25 * swatchSize;
+
+        if (radio_noteLabelingConvention.value() == 'absolute') {
+            text(numToSymbol(mod(i + globalKeySigRoot, 12)), swatchXPos, textHeight);
+        }
+        else if (radio_noteLabelingConvention.value() == 'relative') {
+            const scaleDegree = numToScaleDegree(mod(i, 12));
+            if (scaleDegree) {
+                text(scaleDegree, swatchXPos, textHeight + 1.5);
+                textAlign(CENTER, BASELINE);
+                text('^', swatchXPos, textHeight);
+            }
+        }
+
     }
     rectMode(CORNER);
 
@@ -169,13 +276,13 @@ function colorByCircleOfFifths(note) {
 function applyColorScheme(pitchClass) {
 
     switch (radio_colorScheme.value()) {
-        case "enum_colorScheme.linearChromatic":
+        case "linearChromatic":
             noteHue = colorByLinearChromatic(pitchClass);
             break;
-        case "enum_colorScheme.circleOfFifths":
+        case "circleOfFifths":
             noteHue = colorByCircleOfFifths(pitchClass);
             break;
-        case "enum_colorScheme.consonanceOrder":
+        case "consonanceOrder":
             noteHue = colorByConsonanceOrder(pitchClass);
             break;
         default:
@@ -263,7 +370,7 @@ function setup() {
     checkbox_beatDetect = createCheckbox('automatic beat detection (not yet implemented)', false);
     checkbox_beatDetect.changed(toggleBeatDetection);
     
-    bpm_Input = createInput();
+    bpm_Input = createInput('88');
     bpm_Input.changed(updateBPM);
 
     bpm_Button = createButton('Enter');
@@ -280,7 +387,8 @@ function setup() {
 
 
     createElement('h4', 'Select a key signature:');
-    button_Cb = createButton("Cb");
+
+    //button_Cb = createButton("Cb");
     button_Gb = createButton("Gb");
     button_Db = createButton("Db");
     button_Ab = createButton("Ab");
@@ -293,9 +401,9 @@ function setup() {
     button_A = createButton("A");
     button_E = createButton("E");
     button_B = createButton("B");
-    button_Cs = createButton("C#");
+    //button_Cs = createButton("C#");
     
-    button_Cb.mousePressed(keySig11);
+    //button_Cb.mousePressed(keySig11);
     button_Gb.mousePressed(keySig6);
     button_Db.mousePressed(keySig1);
     button_Ab.mousePressed(keySig8);
@@ -308,20 +416,34 @@ function setup() {
     button_A.mousePressed(keySig9);
     button_E.mousePressed(keySig4);
     button_B.mousePressed(keySig11);
-    button_Cs.mousePressed(keySig1);
+    //button_Cs.mousePressed(keySig1);
+
+        const radioParent_noteLabelingConventions = createDiv();
+    radioParent_noteLabelingConventions.id = "radioParent_noteLabelingConventions";
+    createElement('plaintext', 'Legend Labels:');
+    radio_noteLabelingConvention = createRadio('radioParent_noteLabelingConventions');
+    radio_noteLabelingConvention.option('absolute', 'Note names')
+    radio_noteLabelingConvention.option('relative', 'Scale Degrees')
+    radio_noteLabelingConvention.selected('relative');
+
+    const radioParent_colorSchemes = createDiv();
+    radioParent_colorSchemes.id = "radioParent_colorSchemes";
 
     createElement('h4', 'Color Scheme:');
-    checkbox_dimAccidentals = createCheckbox('Dim accidentals (not yet implemented)', true);
-    radio_colorScheme = createRadio();
-    radio_colorScheme.option('enum_colorScheme.linearChromatic', 'Linear, chromatic');
-    radio_colorScheme.option('enum_colorScheme.circleOfFifths', 'Circle of 5ths');
-    radio_colorScheme.option('enum_colorScheme.consonanceOrder', 'Consonance order');
-    radio_colorScheme.selected('enum_colorScheme.linearChromatic');
+    radio_colorScheme = createRadio('radioParent_colorSchemes');
+    radio_colorScheme.option('linearChromatic', 'Linear, chromatic');
+    radio_colorScheme.option('consonanceOrder', 'Consonance order');
+    radio_colorScheme.option('circleOfFifths', 'Circle of 5ths (not implemented)');
+    radio_colorScheme.selected('linearChromatic');
+    checkbox_dimAccidentals = createCheckbox('Dim accidentals', true);
+
+
 
 //amplitude sliders location
 
-    createElement('h4', 'Smoothing slider (broken): ');
-    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
+//    createElement('h4', 'Smoothing slider (broken): ');
+//    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
+
 //    slider_Volume = createSlider(0, 2, 0.25, 0.01);
 //    slider_Speed = createSlider(0, 3, 1, 0.01);
 //    slider_Pan = createSlider(-1, 1, 0, 0.01);
@@ -374,15 +496,18 @@ function draw() {
 
         colorMode(HSB);
         let noteHue;
-        let normalizedNote = normalizeNote(note + globalKeySigOffset);
+        let normalizedNote = normalizeNote(note - globalKeySigRoot);
         
         noteHue = applyColorScheme(normalizedNote);
-        
-       
-
         let noteBrightness = map(Math.log2(freqVol), 0, 8, 0, 100); //freqVol ranges from 0 to 255
 
-        stroke(color(noteHue, 100, noteBrightness, 1));
+        let noteSaturation = 100;
+        let alpha = 1;
+        if(checkbox_dimAccidentals.checked() && accidentalIntervals.includes(normalizedNote)){
+            noteSaturation = 0;
+            alpha = .15;
+        }
+        stroke(color(noteHue, noteSaturation, noteBrightness, alpha));
         //stroke(strokeColor(note));
         strokeWeight(5);
         line((width / 2 - 20) / 88 * note, height - 50, (width / 2 - 20) / 88 * note, (height - 50) + barHeight);
@@ -435,7 +560,9 @@ function draw() {
     
     /*--------------------- DRAW AMPLITUDE GRAPH ------------------------*/
     var vol = amp.getLevel();
-    amplitudeLog.push(vol);
+    if (song.isPlaying()) {
+        amplitudeLog.push(vol);
+    }
     //fill('white');
     noFill();
     stroke('white');
@@ -445,7 +572,7 @@ function draw() {
     strokeWeight(1);
     beginShape();
     for (let i = 0; i < amplitudeLog.length; i++) {
-        var pointHeight = map(amplitudeLog[i], 0, 1, 0, 10 * height / 3); //display 2/3 of the way up the screen
+        var pointHeight = map(amplitudeLog[i], 0, 1, 0, 3 * height / 3); //display 2/3 of the way up the screen
         pointHeight = -pointHeight;
         pointHeight += height / 3;
         vertex(i, pointHeight);
@@ -470,7 +597,7 @@ function draw() {
     beatNo = Math.trunc(song.currentTime() / (60/BPM));
     
     if (beatNo != prevBeatNo) {
-        beatRecord.push(new BeatRectangle(songPos, loudestNotePitchClass, globalKeySigOffset));
+        beatRecord.push(new BeatRectangle(songPos, loudestNotePitchClass));
         //console.log("Loudest pitch class: " + beatRecord[beatRecord.length-1].loudestPitchClass);
         //console.log("initKeySig: " + beatRecord[beatRecord.length-1].initKeySig);
         //console.log("keySig: " + beatRecord[beatRecord.length-1].keySig);
@@ -513,44 +640,44 @@ function noteToFreq_(note) {
 // even accidentals are normally the same number as their respective note between notes 0 thru 6
 // even accidentals are normally 12 - the number of their respective note between notes 6 thru 12
 function keySig0() { //C
-    prevKeySig = globalKeySigOffset;
-    globalKeySigOffset = 0;
-    if (globalKeySigOffset != prevKeySig) {
+    prevKeySig = globalKeySigRoot;
+    globalKeySigRoot = 0;
+    if (globalKeySigRoot != prevKeySig) {
         /*Update the beat record*/
     }
 }
 function keySig1() { //C#/Db
-    globalKeySigOffset = mod(-1, 12);
+    globalKeySigRoot = 1;
 }
 function keySig2() { //D
-    globalKeySigOffset = mod(-2, 12);
+    globalKeySigRoot = 2;
 }
 function keySig3() { //Eb
-    globalKeySigOffset = mod(-3, 12);
+    globalKeySigRoot = 3;
 }
 function keySig4() { //E
-    globalKeySigOffset = mod(-4, 12);
+    globalKeySigRoot = 4;
 }
 function keySig5() { //F
-    globalKeySigOffset = mod(-5, 12);
+    globalKeySigRoot = 5;
 }
 function keySig6() { //F#/Gb
-    globalKeySigOffset = mod(-6, 12);
+    globalKeySigRoot = 6;
 }
 function keySig7() { //G
-    globalKeySigOffset = mod(-7, 12);
+    globalKeySigRoot = 7;
 }
 function keySig8() { //G#/Ab
-    globalKeySigOffset = mod(-8, 12);
+    globalKeySigRoot = 8;
 }
 function keySig9() { //A
-    globalKeySigOffset = mod(-9, 12);
+    globalKeySigRoot = 9;
 }
 function keySig10() { //Bb
-    globalKeySigOffset = mod(-10, 12);
+    globalKeySigRoot = 10;
 }
 function keySig11() { // B/Cb
-    globalKeySigOffset = mod(-11, 12);
+    globalKeySigRoot = 11;
 }
 
 function toggleBeatDetection() {
@@ -573,6 +700,7 @@ function toggleBeatDetection() {
     for 7 and 12 as arbitrary constants a and n
   */
   let intervalsOrderedByCOF= []; 
+  let accidentalIntervals = [1, 3, 6, 8, 10];
 
   //TODO: 2 arrays for numerator and denominator and generalize to n tones by sorting by LCM(num,denom)
 
