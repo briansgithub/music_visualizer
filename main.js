@@ -17,11 +17,11 @@ function mod(n, m) {
   }
 
 /*-1 for the fact that traditional note numbering starts at 1 (not 0). -3 for shifting the 0 note up 3 semitones from A0 to C1 */
-const kbShift = mod(-1 + -3, 12);
+const kbOffset = mod(-3, 12);
 
 /* Takes in a traditionally named note number (1-88) and outputs the corresponding pitch class in integer notation */
-function normalizeNote(note) {
-    return mod(note + kbShift, 12);
+function tradNoteToPitchClass(tradNote) {
+    return mod(tradNote-1 + kbOffset, 12);
     
 }
 
@@ -56,34 +56,34 @@ function numToSymbol(noteNumber) {
     return noteSymbol
 }
 
-function numToScaleDegree(noteNumber) {
-    let noteSymbol;
-    switch (noteNumber) {
+function specificIntervalToScaleDegree(semitones) {
+    let scaleDegree;
+    switch (semitones) {
         case 0:
-            noteSymbol = '1';
+            scaleDegree = '1';
             break;
         case 2:
-            noteSymbol = '2';
+            scaleDegree = '2';
             break;
         case 4:
-            noteSymbol = '3';
+            scaleDegree = '3';
             break;
         case 5:
-            noteSymbol = '4';
+            scaleDegree = '4';
             break;
         case 7:
-            noteSymbol = '5';
+            scaleDegree = '5';
             break;
         case 9:
-            noteSymbol = '6';
+            scaleDegree = '6';
             break;
         case 11:
-            noteSymbol = '7';
+            scaleDegree = '7';
             break;
         default:
-            noteSymbol = "";
+            scaleDegree = "";
     }
-    return noteSymbol
+    return scaleDegree
 }
 
 function rootToKeySigSymbol(root) {
@@ -247,7 +247,7 @@ function drawLegend() {
             text(numToSymbol(mod(i + globalKeySigRoot, 12)), swatchXPos, textHeight);
         }
         else if (radio_noteLabelingConvention.value() == 'relative') {
-            const scaleDegree = numToScaleDegree(mod(i, 12));
+            const scaleDegree = specificIntervalToScaleDegree(mod(i, 12));
             if (scaleDegree) {
                 text(scaleDegree, swatchXPos, textHeight + 1.5);
                 textAlign(CENTER, BASELINE);
@@ -418,7 +418,7 @@ function setup() {
     button_B.mousePressed(keySig11);
     //button_Cs.mousePressed(keySig1);
 
-        const radioParent_noteLabelingConventions = createDiv();
+    const radioParent_noteLabelingConventions = createDiv();
     radioParent_noteLabelingConventions.id = "radioParent_noteLabelingConventions";
     createElement('plaintext', 'Legend Labels:');
     radio_noteLabelingConvention = createRadio('radioParent_noteLabelingConventions');
@@ -434,7 +434,7 @@ function setup() {
     radio_colorScheme.option('linearChromatic', 'Linear, chromatic');
     radio_colorScheme.option('consonanceOrder', 'Consonance order');
     radio_colorScheme.option('circleOfFifths', 'Circle of 5ths (not implemented)');
-    radio_colorScheme.selected('linearChromatic');
+    radio_colorScheme.selected('consonanceOrder');
     checkbox_dimAccidentals = createCheckbox('Dim accidentals', true);
 
 
@@ -459,77 +459,59 @@ function draw() {
     background(bkgrBrightness);
 
 
-//    song.setVolume(slider_Volume.value());
-//    song.rate(slider_Speed.value());
-//    song.pan(slider_Pan.value());
+    //    song.setVolume(slider_Volume.value());
+    //    song.rate(slider_Speed.value());
+    //    song.pan(slider_Pan.value());
 
     var spectrum = fft.analyze();
 
-    /* ------ TODO: CHOOSE COLOR CODING MODE ----- */
-        //options: chromatically, linearly by index; circle of fiths ; consonance order
-    /* ------ CHOOSE COLOR CODING MODE END ----- */
+
 
     /*--------------------- DRAW PIANO FREQUENCIES ------------------------*/
     // 'note' corresponds to a note on piano, STARTING AT 1 = A0. 
 
-    for (let note = 1; note <= 88; note++) { //note will conventionally always assume starting indexing at 1 in this block. 
-        let noteFreq = noteToFreq_(note); //Math.pow(Math.pow(2, 1 / 12), note - 49) * 440; underscore b/c "noteToFreq" is alrady defined somewhere in backend library code
+    /*tradNote is the note number in traditional numbering from 1 to 88*/
+    for (let tradNoteNum = 1; tradNoteNum <= 88; tradNoteNum++) { //note will conventionally always assume starting indexing at 1 in this block. 
+        let noteFreq = noteToFreq_(tradNoteNum); //Math.pow(Math.pow(2, 1 / 12), note - 49) * 440; underscore b/c "noteToFreq" is alrady defined somewhere in backend library code
         /*
         1 semitone == 100 cents ; 50 cents == 1/2 semitone
         2 root 12 divides the octave into 12 semitones. 
         2 root 1200 divides octave into 1200 tones (each semitone is divided into 100 smaller tones, so +/-50 1200-tones is +/-50 cents)
         (2-root-120)^(# of 1200-tones)
         */
-        var noteSub50Cents = 440 * Math.pow(Math.pow(2, 1 / 1200), 100 * (note - 49) - 50); //Hz
-        var notePlus50Cents = 440 * Math.pow(Math.pow(2, 1 / 1200), 100 * (note - 49) + 50); //Hz
+        let noteSub50Cents = 440 * Math.pow(Math.pow(2, 1 / 1200), 100 * (tradNoteNum - 49) - 50); //Hz
+        let notePlus50Cents = 440 * Math.pow(Math.pow(2, 1 / 1200), 100 * (tradNoteNum - 49) + 50); //Hz
 
-        var freqVol = fft.getEnergy(noteSub50Cents, notePlus50Cents); // get the total energy +/- 50 cents around desired note
-        currentSpectrum[note - 1] = freqVol;
+        let freqVol = fft.getEnergy(noteSub50Cents, notePlus50Cents); // get the total energy +/- 50 cents around desired note
+        currentSpectrum[tradNoteNum - 1] = freqVol;
+        
 
-        var freqVolScaled = freqVol;
+        let freqVolScaled = freqVol;
         freqVolScaled = Math.pow(freqVol, slider_exaggerationExponent.value()); //scaled so tall bars are even taller and short bars are even shorter.
 
-        var barHeight = map(freqVolScaled, 0, Math.pow(255, slider_exaggerationExponent.value()), 0, height / 2); //exponentially exaggerate differences between bars
+        let barHeight = map(freqVolScaled, 0, Math.pow(255, slider_exaggerationExponent.value()), 0, height / 2); //exponentially exaggerate differences between bars
         barHeight *= Math.pow(slider_barScale.value(), slider_exaggerationExponent.value()); // linearly scale up bar heights by scale factor and exaggerationExponent
         barHeight = -barHeight;
 
 
         colorMode(HSB);
         let noteHue;
-        let normalizedNote = normalizeNote(note - globalKeySigRoot);
-        
-        noteHue = applyColorScheme(normalizedNote);
-        let noteBrightness = map(Math.log2(freqVol), 0, 8, 0, 100); //freqVol ranges from 0 to 255
+        let relativeInterval = tradNoteToPitchClass(tradNoteNum - globalKeySigRoot);
 
+        noteHue = applyColorScheme(relativeInterval);
         let noteSaturation = 100;
+        let noteBrightness = map(Math.log2(freqVol), 0, 8, 0, 100); //freqVol ranges from 0 to 255
         let alpha = 1;
-        if(checkbox_dimAccidentals.checked() && accidentalIntervals.includes(normalizedNote)){
+        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(relativeInterval)) {
             noteSaturation = 0;
             alpha = .15;
         }
         stroke(color(noteHue, noteSaturation, noteBrightness, alpha));
         //stroke(strokeColor(note));
         strokeWeight(5);
-        line((width / 2 - 20) / 88 * note, height - 50, (width / 2 - 20) / 88 * note, (height - 50) + barHeight);
+        line((width / 2 - 20) / 88 * tradNoteNum, height - 50, (width / 2 - 20) / 88 * tradNoteNum, (height - 50) + barHeight);
         /*--------------------- END DRAW PIANO FREQUENCIES ------------------------*/
 
-
-        /*--------------------- DRAW THE COLOR CODING LEGEND ------------------------*/
-
-
-
-
-        /*Psuedocode for drawing key
-        Save ColorSwatch objects into an array
-
-        Draw white background
-        Draw color swatch (colored squares with black outlines)
-        draw text next to color swatch
-
-        update the color key based on the radio button value 
-        */
-
-        /*--------------------- END DRAW THE COLOR CODING LEGEND ------------------------*/
 
         /*--- Draw the note labels ---*/
         textFont(projectFont);
@@ -538,26 +520,56 @@ function draw() {
         fill('white');
         textSize(7);
 
-
-        textAlign(CENTER, CENTER);       
-        text(numToSymbol(normalizeNote(note)), (width/2 - 20) / 88 * note - 2, height - 37);
+        textAlign(CENTER, CENTER);
+        text(numToSymbol(tradNoteToPitchClass(tradNoteNum)), (width / 2 - 20) / 88 * tradNoteNum - 2, height - 37);
+        /*--- End Draw the note labels ---*/
     }
 
-    let spectrumMax = max(currentSpectrum); //loudest volume at this istant
-    let loudestNotePitchClass; 
-    for (let i = 0; i <= 87; i++) { 
-        if (currentSpectrum[i] == spectrumMax) {
-            loudestNotePitchClass = mod(i + 9, 12); //currentSpectrum array indexes at 0, whereas "note" indexes at 1
-            //console.log(loudestNotePitch);
-            break;
-        }
+    /*----- DRAW CUMULATIVE AMPLITUDE GRAPH ----- */
+    /* ----- Sum amplitudes of same pitch classes*/
+    let pitchClassVolumes = new Array(12).fill(0);
+
+    for (let i = 0; i <= 87; i++) {
+        pitchClassVolumes[tradNoteToPitchClass(i + 1)] += currentSpectrum[i];
     }
-
-
-    /*---------------- DRAW REORGANIZED AMPLITUDE GRAPH -------------- */
-
-
     
+    let maxCumulativeVolume = max(pitchClassVolumes);
+
+    colorMode(HSB);
+
+    for (let pitchClass = 0; pitchClass < pitchClassVolumes.length; pitchClass++) {
+        let pitchClassHue = applyColorScheme(pitchClass);
+        let pitchClassSaturation = 100;
+        let pitchClassBrightness = 100
+        let alpha = 1;
+        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(pitchClass)) {
+            noteSaturation = 0;
+            alpha = .15;
+        }
+
+        let barHeight = map(pitchClassVolumes[pitchClass], 0, maxCumulativeVolume, 0, height / 2); 
+        barHeight = -barHeight;
+        
+        stroke(color(pitchClassHue, pitchClassSaturation, pitchClassBrightness, alpha));
+        strokeWeight(5);
+        line((width / 2)*(1+ pitchClass/88), height - 50, (width / 2)*(1+ pitchClass/88), (height - 50) + barHeight);
+
+
+        /*--- Draw Pitch Class labels ---*/
+        textFont(projectFont);
+        //strokeWeight(1);
+        noStroke();
+        fill('white');
+        textSize(7);
+
+        textAlign(CENTER, CENTER);
+        text(numToSymbol(pitchClass), (width / 2)*(1+ pitchClass/88), height - 37);
+        /*--- End Draw Pitch Class labels ---*/
+    }
+
+    /*---------------- END DRAW CUMULATIVE AMPLITUDE GRAPH -------------- */
+
+
     /*--------------------- DRAW AMPLITUDE GRAPH ------------------------*/
     var vol = amp.getLevel();
     if (song.isPlaying()) {
@@ -595,9 +607,16 @@ function draw() {
 
     let currentColor;
     beatNo = Math.trunc(song.currentTime() / (60/BPM));
-    
+    let spectrumMax = max(currentSpectrum); //loudest volume at this istant
+    let loudestPitchClass;
+    for (let i = 0; i <= 87; i++) {
+        if (currentSpectrum[i] == spectrumMax) {
+            loudestPitchClass = tradNoteToPitchClass(i + 1); 
+            break;
+        }
+    }
     if (beatNo != prevBeatNo) {
-        beatRecord.push(new BeatRectangle(songPos, loudestNotePitchClass));
+        beatRecord.push(new BeatRectangle(songPos, loudestPitchClass));
         //console.log("Loudest pitch class: " + beatRecord[beatRecord.length-1].loudestPitchClass);
         //console.log("initKeySig: " + beatRecord[beatRecord.length-1].initKeySig);
         //console.log("keySig: " + beatRecord[beatRecord.length-1].keySig);
@@ -613,6 +632,7 @@ function draw() {
         //console.log(Math.trunc(song.currentTime() / (60 / BPM)));
 
     drawLegend();
+
 }
 
 
