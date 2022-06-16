@@ -1,10 +1,10 @@
 ﻿# Music Visualizer Readme
 
-SPACE         play/pause song.  
-LEFT_ARROW    jump -3 seconds  
-RIGHT_ARROW   jump + 3 seconds  
-d             dim accidentals   
-r             restart song  
+SPACE: play/pause song.  
+LEFT_ARROW: jump -3 seconds  
+RIGHT_ARROW: jump + 3 seconds  
+d: dim accidentals   
+r: restart song  
   
 Colored rectangles are captured on each beat and indicate the loudest pitch class at that time.  
 Left click on a Beat Rectangle to jump to that time in the song.  
