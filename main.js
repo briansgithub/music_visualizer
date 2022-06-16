@@ -89,11 +89,13 @@ function setup() {
     background(bkgrBrightness);
     songDuration = song.duration();
 
+
     button_toggle = createButton("play/pause");
     button_toggle.mousePressed(toggleSong);
 
     button_restart = createButton("restart song");
     button_restart.mousePressed(restartSong);
+    createA('https://github.com/briansgithub/music_visualizer/blob/main/README.md', 'Instructions in the Readme', '_blank');;
 
     createElement('h4', 'Amplitude Difference Exaggeration and Linear Scaling sliders:');
     slider_exaggerationExponent = createSlider(0, 7, 6, 0.01);
