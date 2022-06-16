@@ -1,8 +1,10 @@
 /// <reference path="./TSDef/p5.global-mode.d.ts" />
 "use strict";
 
+//TODO: 2 arrays for numerator and denominator of interval ratios and generalize to n tones by sorting by LCM(num,denom)
 const intervalRatios = [1/1, 16/15, 9/8, 6/5, 5/4, 4/3, 45/32, 3/2, 8/5, 5/3, 9/5, 15/8];
 const intervalsOrderedByConsonance= [0, 10, 8, 5, 4, 2, 11, 1, 6, 3, 7, 9]; 
+const accidentalIntervals = [1, 3, 6, 8, 10];
 
 /*
   COF := Circle of Fifths
@@ -13,7 +15,6 @@ const intervalsOrderedByConsonance= [0, 10, 8, 5, 4, 2, 11, 1, 6, 3, 7, 9];
   for 7 and 12 as arbitrary constants a and n
 */
 let intervalsOrderedByCOF= []; 
-let accidentalIntervals = [1, 3, 6, 8, 10];
 
 /* mod redefinition needed because javascript % operator returns negative integers (not positive) for negative dividends */
 function mod(n, m) {

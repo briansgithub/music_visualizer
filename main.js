@@ -8,47 +8,38 @@
 /// <reference path="spectrum.js" />
 /// <reference path="cumulativeAmplitudes.js" />
 /// <reference path="beatRecord.js" />
+/// <reference path="controls.js" />
+
 
 //TSDef provides typescript definitions for intellisense (function documentation, autocompletion)
 "use strict";
 
 
 //-----------------------------------------------------------------------------
-let defaultBPM = 88;
+let defaultBPM = 190;
+let globalKeySigRoot = 9;
 let globalBPM = defaultBPM;
 
+let globalFFTObj;
+let globalAmplitudeObj;
+
 let prevKeySig = 0;
-let globalKeySigRoot = 0;
 let firstBeatDelay;
 let bkgrBrightness = 0;
-let fft;
-let smoothVal = 0.5; 
-//replaced smoothVal with slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
+let smoothVal = 0; //replaces slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
 
-let amp;
-
-let amplitudeLog = [];
 let currentSpectrum = []; //88 notes with freq values of notes being played right now.
+let amplitudeLog = [];
+let beatRecord = []; // log of all the beatRectangle objects
 
-let button_Cb;
-let button_Gb;
-let button_Db;
-let button_Ab;
-let button_Eb;
-let button_Bb;
-let button_F;
-let button_C;
-let button_G;
-let button_D;
-let button_A;
-let button_E;
-let button_B;
-let button_Cs;
+let button_Cb, button_Gb, button_Db, button_Ab, button_Eb, button_Bb, button_F, button_C, button_G, button_D, button_A, button_E, button_B, button_Cs;
 
 let projectFont;
 let song;
-let songName = "Hikoukigumo.mp3";
+let songName = "@angelDream.mp3";
 let songDuration; 
+
+
 
 function preload() {
     song = loadSound(songName);
@@ -90,16 +81,11 @@ function restartSong(){
     amplitudeLog = [];
 }
 
-function toggleSong() {
-    if (song.isPlaying()) {
-        song.pause();
-    } else {
-        song.play();
-    }
-}
+function toggleSong() { song.isPlaying() ? song.pause() : song.play(); }
 
 function setup() {
     createCanvas(1200, 600);
+    
     background(bkgrBrightness);
     songDuration = song.duration();
 
@@ -110,7 +96,7 @@ function setup() {
     button_restart.mousePressed(restartSong);
 
     createElement('h4', 'Amplitude Difference Exaggeration and Linear Scaling sliders:');
-    slider_exaggerationExponent = createSlider(0, 7, 1, 0.01);
+    slider_exaggerationExponent = createSlider(0, 7, 6, 0.01);
     slider_barScale = createSlider(0, 4, 1 , 0.01);
 
     createElement('h4', 'Enter BPM: ');
@@ -148,7 +134,7 @@ function setup() {
     button_F.mousePressed(keySig5);
     button_C.mousePressed(keySig0);
     button_G.mousePressed(keySig7);
-    button_D.mousePressed(keySig2)
+    button_D.mousePressed(keySig2);
     button_A.mousePressed(keySig9);
     button_E.mousePressed(keySig4);
     button_B.mousePressed(keySig11);
@@ -178,16 +164,18 @@ function setup() {
 //    slider_Volume = createSlider(0, 2, 0.25, 0.01);
 //    slider_Speed = createSlider(0, 3, 1, 0.01);
 
-    fft = new p5.FFT(smoothVal, Math.pow(2, 12));
-    amp = new p5.Amplitude();
+    globalFFTObj = new p5.FFT(smoothVal, Math.pow(2, 12));
+    globalAmplitudeObj = new p5.Amplitude();
     console.log(song);
 
 }
 
 
 function draw() {
-    background(bkgrBrightness);
-    let spectrum = fft.analyze();
+    if(song.isPlaying()){
+        background(bkgrBrightness);
+    }
+    let spectrum = globalFFTObj.analyze();
     //    song.setVolume(slider_Volume.value());
     //    song.rate(slider_Speed.value());
     //    song.pan(slider_Pan.value());
@@ -207,42 +195,18 @@ function draw() {
 // odd accidentals  are normally their respective note number -6.
 // even accidentals are normally the same number as their respective note between notes 0 thru 6
 // even accidentals are normally 12 - the number of their respective note between notes 6 thru 12
-function keySig0() { //C
-    globalKeySigRoot = 0;
-}
-function keySig1() { //C#/Db
-    globalKeySigRoot = 1;
-}
-function keySig2() { //D
-    globalKeySigRoot = 2;
-}
-function keySig3() { //Eb
-    globalKeySigRoot = 3;
-}
-function keySig4() { //E
-    globalKeySigRoot = 4;
-}
-function keySig5() { //F
-    globalKeySigRoot = 5;
-}
-function keySig6() { //F#/Gb
-    globalKeySigRoot = 6;
-}
-function keySig7() { //G
-    globalKeySigRoot = 7;
-}
-function keySig8() { //G#/Ab
-    globalKeySigRoot = 8;
-}
-function keySig9() { //A
-    globalKeySigRoot = 9;
-}
-function keySig10() { //Bb
-    globalKeySigRoot = 10;
-}
-function keySig11() { // B/Cb
-    globalKeySigRoot = 11;
-}
+function keySig0() { globalKeySigRoot = 0; }//C
+function keySig1() { globalKeySigRoot = 1; }//C#/Db
+function keySig2() { globalKeySigRoot = 2; }//D
+function keySig3() { globalKeySigRoot = 3; }//Eb
+function keySig4() { globalKeySigRoot = 4; }//E
+function keySig5() { globalKeySigRoot = 5; }//F
+function keySig6() { globalKeySigRoot = 6; }//F#/Gb
+function keySig7() { globalKeySigRoot = 7; }//G
+function keySig8() { globalKeySigRoot = 8; }//G#/Ab
+function keySig9() { globalKeySigRoot = 9; }//A
+function keySig10() { globalKeySigRoot = 10; }//Bb
+function keySig11() { globalKeySigRoot = 11; }// B/Cb
 
 function toggleBeatDetection() {
     if (checkbox_beatDetect.checked()) {
@@ -250,4 +214,4 @@ function toggleBeatDetection() {
     }
 }
 
-  //TODO: 2 arrays for numerator and denominator and generalize to n tones by sorting by LCM(num,denom)
+  

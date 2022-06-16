@@ -19,7 +19,7 @@ function drawSpectrum() {
         let noteSub50Cents = 440 * Math.pow(Math.pow(2, 1 / 1200), 100 * (conventionalNoteNum - 49) - 50); //Hz
         let notePlus50Cents = 440 * Math.pow(Math.pow(2, 1 / 1200), 100 * (conventionalNoteNum - 49) + 50); //Hz
 
-        let freqVol = fft.getEnergy(noteSub50Cents, notePlus50Cents); // get the total energy +/- 50 cents around desired note
+        let freqVol = globalFFTObj.getEnergy(noteSub50Cents, notePlus50Cents); // get the total energy +/- 50 cents around desired note
         currentSpectrum[conventionalNoteNum - 1] = freqVol;
 
 

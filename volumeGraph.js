@@ -7,7 +7,7 @@
 
 function drawVolumeGraph() {
     /*--------------------- DRAW AMPLITUDE GRAPH ------------------------*/
-    var vol = amp.getLevel();
+    var vol = globalAmplitudeObj.getLevel();
     if (song.isPlaying()) {
         amplitudeLog.push(vol);
     }

@@ -8,12 +8,23 @@
 
 let prevBeatNo = 0;
 let beatNo = 0;
-let beatRecord = []; // log of all the beatRectangle objects
 
 /* Beat rectangle constructor */
-function BeatRectangle(xPosition, loudestPitchClass) {
-    this.xPosition = xPosition;
+function BeatRectangle(beatNo, loudestPitchClass, timestamp) {
+    this.beatNo = beatNo;
+    this.x1Position = map(timestamp, 0, song.buffer.duration, 0, width);
+    this.y1Position = 7;
+    this.width = width / (songDuration / (60 / globalBPM));
+    this.height = height / 3 - 7;
     this.loudestPitchClass = loudestPitchClass;
+    this.timestamp = timestamp;
+    this.clicked = function () {
+        if ((mouseX >= this.x1Position) && (mouseX <= this.x1Position + this.width)
+            && (mouseY >= this.y1Position) && (mouseY <= this.y1Position + this.height)) {
+            song.jump(this.timestamp);
+        }
+    }
+
 
     this.displayBeat = function () {
         let specificInterval = mod(this.loudestPitchClass - globalKeySigRoot, 12) //no +kbShift because "loudestPitchClass" normalized for C = 0
@@ -28,25 +39,29 @@ function BeatRectangle(xPosition, loudestPitchClass) {
             alpha = .15;
         }
         fill(updatedColorHue, noteSaturation, 100, alpha);
-        rect(this.xPosition, 7, width / (songDuration / (60 / globalBPM)), height / 3 - 7);
+        rect(this.x1Position, this.y1Position, this.width, this.height);
     }
 }
 
 function logBeat() {
-    beatNo = Math.trunc(song.currentTime() / (60 / globalBPM));
-    let songXPos = map(song.currentTime(), 0, song.buffer.duration, 0, width);
+    let currentTime = song.currentTime();
+    beatNo = Math.trunc(currentTime / (60 / globalBPM));
 
-    let spectrumMax = max(currentSpectrum); //loudest volume at this istant
-    let loudestPitchClass;
-    for (let i = 0; i <= 87; i++) {
-        if (currentSpectrum[i] == spectrumMax) {
-            loudestPitchClass = conventionalNoteToPitchClass(i + 1);
-            break;
+    if (
+        !beatRecord.some(BeatRectangle => BeatRectangle.beatNo === beatNo)) {//check if object doesn't already exist in array
+
+        let spectrumMax = max(currentSpectrum); //loudest volume at this istant
+        let loudestPitchClass;
+        for (let i = 0; i <= 87; i++) {
+            if (currentSpectrum[i] == spectrumMax) {
+                loudestPitchClass = conventionalNoteToPitchClass(i + 1);
+                break;
+            }
         }
+
+        beatRecord.splice(beatNo, 0, new BeatRectangle(beatNo, loudestPitchClass, currentTime));
     }
-    if (beatNo != prevBeatNo) {
-        beatRecord.push(new BeatRectangle(songXPos, loudestPitchClass));
-    }
+
     prevBeatNo = beatNo;
 }
 
