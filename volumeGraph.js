@@ -8,30 +8,35 @@
 function drawVolumeGraph() {
     /*--------------------- DRAW AMPLITUDE GRAPH ------------------------*/
     var vol = globalAmplitudeObj.getLevel();
-    if (song.isPlaying()) {
+    let currentPixel = floor(width *(song.currentTime()/song.duration()));
+    //only log an amplitudeLog entry when the current time/total time has crossed a pixel boundary.
+    if (song.isPlaying() && currentPixel >= amplitudeLog.length + 1) {
         amplitudeLog.push(vol);
     }
-    //fill('white');
-    noFill();
+/*
+    fill('white');
+    textSize(32);
+    text(amplitudeLog[amplitudeLog.length-1], width/2, height/2);
+*/
+    let baselineY = height / 3;
+    //horizontal line
     stroke('white');
     strokeWeight(2);
-    line(0, height / 3, width, height / 3)
+    line(0, baselineY, width, baselineY)
 
+    /*volume graph*/
+    noFill();
+    stroke('black');
     strokeWeight(1);
     beginShape();
     for (let i = 0; i < amplitudeLog.length; i++) {
-        var pointHeight = map(amplitudeLog[i], 0, 1, 0, 3 * height / 3); //display 2/3 of the way up the screen
-        pointHeight = -pointHeight;
-        pointHeight += height / 3;
-        vertex(i, pointHeight);
+        let pointY = map(amplitudeLog[i], 0, max(amplitudeLog), baselineY, 0); //display 2/3 of the way up the screen
+
+        vertex(i, pointY);
 
         //        bkgrBrightness = map(amplitudeLog[i], 0, 1, 0, 50);
         //        bkgrBrightness = Math.round(bkgrBrightness);
     }
     endShape();
-
-    if (amplitudeLog.length > width) {
-        amplitudeLog.splice(0, 1);
-    }
 
 }

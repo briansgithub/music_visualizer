@@ -47,7 +47,7 @@ function logBeat() {
     let currentTime = song.currentTime();
     beatNo = Math.trunc(currentTime / (60 / globalBPM));
 
-    if (
+    if (beatNo != prevBeatNo && //prevents an initial box when song not playing and a residual box when song restarted. 
         !beatRecord.some(BeatRectangle => BeatRectangle.beatNo === beatNo)) {//check if object doesn't already exist in array
 
         let spectrumMax = max(currentSpectrum); //loudest volume at this istant

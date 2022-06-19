@@ -35,9 +35,12 @@ Browsers may have different default behaviors attached to various key events.
 To prevent any default behavior for this event, add "return false" to the end of the method.
 */
 function keyPressed() {
+    let retval;
+
     switch (key) {
         case ' ':
             toggleSong();
+            retval = false;
             break;
         case 'd':
             if (checkbox_dimAccidentals.checked()) {
@@ -45,6 +48,7 @@ function keyPressed() {
             } else {
                 checkbox_dimAccidentals.checked(true);
             }
+            retval = false;
             break;
         default:
             console.log('Unrecognized \'key\' pressed');
@@ -56,14 +60,16 @@ function keyPressed() {
             if (song.currentTime() > jumpDur) {
                 song.jump(song.currentTime() - jumpDur);
             }
+            retval = false;
             break;
         case RIGHT_ARROW:
             if (song.duration() - song.currentTime() > jumpDur) {
                 song.jump(song.currentTime() + jumpDur);
             }
+            retval = false;
             break;
         default:
             console.log('Unrecognized \'keyCode\' pressed');
     }
-    //return false; //blocks default browser keypress behavior
+    return retval; //blocks default browser keypress behavior
 }

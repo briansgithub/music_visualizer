@@ -17,7 +17,7 @@
 
 //-----------------------------------------------------------------------------
 let defaultBPM = 190;
-let globalKeySigRoot = 9;
+let globalKeySigRoot = 4;
 let globalBPM = defaultBPM;
 
 let globalFFTObj;
@@ -55,7 +55,8 @@ let checkbox_beatDetect;
 let radio_noteLabelingConvention;
 let radio_colorScheme;
 
-//let slider_Volume;
+let volumeSlider = true;
+if (volumeSlider) { var slider_Volume; }
 //let slider_Speed;
 //let slider_Pan;
 let slider_smoothVal;
@@ -163,7 +164,7 @@ function setup() {
 //    createElement('h4', 'Smoothing slider (broken): ');
 //    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
 
-//    slider_Volume = createSlider(0, 2, 0.25, 0.01);
+    if(volumeSlider) {slider_Volume = createSlider(0, 2, 1, 0.01);}
 //    slider_Speed = createSlider(0, 3, 1, 0.01);
 
     globalFFTObj = new p5.FFT(smoothVal, Math.pow(2, 12));
@@ -178,16 +179,16 @@ function draw() {
         background(bkgrBrightness);
     }
     let spectrum = globalFFTObj.analyze();
-    //    song.setVolume(slider_Volume.value());
+    if (volumeSlider) { song.setVolume(slider_Volume.value()); }
     //    song.rate(slider_Speed.value());
     //    song.pan(slider_Pan.value());
 
     drawLegend();
     drawSpectrum();
     drawCumulativeAmplitudes();
-    drawVolumeGraph();
     logBeat();
     drawBeats();
+    drawVolumeGraph();
 
 }
 
