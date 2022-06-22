@@ -1,5 +1,13 @@
 ﻿# Music Visualizer Readme
 
+1. Upload a file to analyze using the "Choose File" button  
+2. Enter the BPM of the song in the text entry box
+3. Adjust the "Amplitude Difference Exaggeration" slider to make notes stand out more  
+4. Adjust "Linear Scaling" slider to make spectrum bars fit on the screen 
+5. Click the key signature buttons to  change the coloring of the notes displayed  
+(see the legend for the mapping of notes to colors)
+
+
 SPACE: play/pause song.  
 LEFT_ARROW: jump -3 seconds  
 RIGHT_ARROW: jump + 3 seconds  

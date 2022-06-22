@@ -26,7 +26,7 @@ let globalAmplitudeObj;
 let prevKeySig = 0;
 let firstBeatDelay;
 let bkgrBrightness = 0;
-let smoothVal = 0; //replaces slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
+let smoothVal = 0.01; //replaces slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
 
 let currentSpectrum = []; //88 notes with freq values of notes being played right now.
 let amplitudeLog = [];
@@ -35,18 +35,15 @@ let beatRecord = []; // log of all the beatRectangle objects
 let button_Cb, button_Gb, button_Db, button_Ab, button_Eb, button_Bb, button_F, button_C, button_G, button_D, button_A, button_E, button_B, button_Cs;
 
 let projectFont;
-let song;
-let songName = "@angelDream.mp3";
-let songDuration; 
+
 
 
 
 function preload() {
-    song = loadSound(songName);
+    //song = loadSound(songName);
     // song.reversed = true;
     projectFont = loadFont('Calibri.ttf');
 }
-
 
 let bpmPromptText;
 let button_BPMEnter;
@@ -61,7 +58,7 @@ if (volumeSlider) { var slider_Volume; }
 //let slider_Pan;
 let slider_smoothVal;
 
-let button_toggle;
+let button_togglePlayback;
 let button_restart;
 let slider_barScale; // used to linearly scale bars
 let slider_exaggerationExponent; //used as a power to make tall bars taller and short bars shorter.
@@ -69,13 +66,13 @@ let slider_exaggerationExponent; //used as a power to make tall bars taller and 
 let checkbox_dimAccidentals;
 
 let input_BPM;
-function updateBPM(){
+function updateBPM() {
     restartSong();
     globalBPM = input_BPM.value();
     console.log("BPM: " + globalBPM)
 }
 
-function restartSong(){
+function restartSong() {
     background(0);
     song.jump(0); //doesn't work when the song is paused
     beatRecord = [];
@@ -84,34 +81,63 @@ function restartSong(){
 
 function toggleSong() { song.isPlaying() ? song.pause() : song.play(); }
 
+let song;
+let songName = "@angelDream.mp3";
+let songDuration;
+
+function loadDefaultSong(){
+    song = loadSound(songName);
+    defaultBPM = 190;
+    globalKeySigRoot = 4;
+}
+
+let button_loadDefault;
+let audioIsLoaded = false;
 function setup() {
+
+   /* Load sound from file */
+    createFileInput(file => {
+        song = loadSound(file.data, _ => {
+            globalFFTObj = new p5.FFT(smoothVal, Math.pow(2, 12));
+            globalAmplitudeObj = new p5.Amplitude();
+            songDuration = song.duration();
+            console.log(song);
+            audioIsLoaded = true;
+        });
+    });
+
+    /*
+    button_loadDefault = createButton("Load default song");
+    button_loadDefault.mousePressed(loadDefaultSong);
+    */
+
     createCanvas(1200, 600);
-    
     background(bkgrBrightness);
-    songDuration = song.duration();
 
+    createElement('p');
 
-    button_toggle = createButton("play/pause");
-    button_toggle.mousePressed(toggleSong);
+    button_togglePlayback = createButton("play/pause");
+    button_togglePlayback.mousePressed(toggleSong);
 
     button_restart = createButton("restart song");
     button_restart.mousePressed(restartSong);
+    createElement('p');
     createA('https://github.com/briansgithub/music_visualizer/blob/main/README.md', 'Instructions in the Readme', '_blank');;
 
     createElement('h4', 'Amplitude Difference Exaggeration and Linear Scaling sliders:');
     slider_exaggerationExponent = createSlider(0, 7, 6, 0.01);
-    slider_barScale = createSlider(0, 4, 1 , 0.01);
+    slider_barScale = createSlider(0, 4, 1, 0.01);
 
     createElement('h4', 'Enter BPM: ');
     checkbox_beatDetect = createCheckbox('automatic beat detection (not yet implemented)', false);
     checkbox_beatDetect.changed(toggleBeatDetection);
-    
+
     input_BPM = createInput(globalBPM);
     input_BPM.changed(updateBPM);
 
     button_BPMEnter = createButton('Enter');
     button_BPMEnter.mousePressed('updateBPM');
-    
+
     createElement('h4', 'Select a key signature:');
     //button_Cb = createButton("Cb");
     button_Gb = createButton("Gb");
@@ -127,7 +153,7 @@ function setup() {
     button_E = createButton("E");
     button_B = createButton("B");
     //button_Cs = createButton("C#");
-    
+
     //button_Cb.mousePressed(keySig11);
     button_Gb.mousePressed(keySig6);
     button_Db.mousePressed(keySig1);
@@ -161,35 +187,34 @@ function setup() {
     radio_colorScheme.selected('consonanceOrder');
     checkbox_dimAccidentals = createCheckbox('Dim accidentals', true);
 
-//    createElement('h4', 'Smoothing slider (broken): ');
-//    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
+    //    createElement('h4', 'Smoothing slider (broken): ');
+    //    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
 
-    if(volumeSlider) {slider_Volume = createSlider(0, 2, 1, 0.01);}
-//    slider_Speed = createSlider(0, 3, 1, 0.01);
+    if (volumeSlider) { slider_Volume = createSlider(0, 2, 1, 0.01); }
+    //    slider_Speed = createSlider(0, 3, 1, 0.01);
 
-    globalFFTObj = new p5.FFT(smoothVal, Math.pow(2, 12));
-    globalAmplitudeObj = new p5.Amplitude();
-    console.log(song);
+
 
 }
 
 
 function draw() {
-    if(song.isPlaying()){
-        background(bkgrBrightness);
+    if (audioIsLoaded) {
+        if (song.isPlaying()) {
+            background(bkgrBrightness);
+        }
+        let spectrum = globalFFTObj.analyze();
+        if (volumeSlider) { song.setVolume(slider_Volume.value()); }
+        //    song.rate(slider_Speed.value());
+        //    song.pan(slider_Pan.value());
+
+        drawLegend();
+        drawSpectrum();
+        drawCumulativeAmplitudes();
+        logBeat();
+        drawBeats();
+        drawVolumeGraph();
     }
-    let spectrum = globalFFTObj.analyze();
-    if (volumeSlider) { song.setVolume(slider_Volume.value()); }
-    //    song.rate(slider_Speed.value());
-    //    song.pan(slider_Pan.value());
-
-    drawLegend();
-    drawSpectrum();
-    drawCumulativeAmplitudes();
-    logBeat();
-    drawBeats();
-    drawVolumeGraph();
-
 }
 
 //I don't know why there's a 12-n, 5*n, 12-n, 5*n,... pattern
@@ -217,4 +242,3 @@ function toggleBeatDetection() {
     }
 }
 
-  

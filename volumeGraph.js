@@ -5,13 +5,16 @@
 /// <reference path="coloring.js" />
 "use strict";
 
+let maxVol = 0;
+
 function drawVolumeGraph() {
     /*--------------------- DRAW AMPLITUDE GRAPH ------------------------*/
     var vol = globalAmplitudeObj.getLevel();
-    let currentPixel = floor(width *(song.currentTime()/song.duration()));
     //only log an amplitudeLog entry when the current time/total time has crossed a pixel boundary.
+    let currentPixel = floor(width *(song.currentTime()/song.duration()));
     if (song.isPlaying() && currentPixel >= amplitudeLog.length + 1) {
         amplitudeLog.push(vol);
+        if (vol > maxVol) { maxVol = vol; }
     }
 /*
     fill('white');
@@ -30,7 +33,7 @@ function drawVolumeGraph() {
     strokeWeight(1);
     beginShape();
     for (let i = 0; i < amplitudeLog.length; i++) {
-        let pointY = map(amplitudeLog[i], 0, max(amplitudeLog), baselineY, 0); //display 2/3 of the way up the screen
+        let pointY = map(amplitudeLog[i], 0, maxVol, baselineY, 0); //display 2/3 of the way up the screen
 
         vertex(i, pointY);
 
