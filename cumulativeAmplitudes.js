@@ -25,7 +25,7 @@ function drawCumulativeAmplitudes() {
         }
     }
 
-    let displaySorted = false;
+    const displaySorted = false;
     if (displaySorted) {
         accumulatorObjs.sort(function (a, b) { return b.amplitude - a.amplitude });
     }
