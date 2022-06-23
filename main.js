@@ -110,6 +110,7 @@ function songInit() {
 let button_fileInput;
 let button_loadDefault;
 let audioIsLoaded = false;
+let checkbox_leftHandMode;
 function setup() {
 
    /* Load sound from file */
@@ -121,7 +122,7 @@ function setup() {
     });
 
 
-    button_loadDefault = createButton("Default song");
+    button_loadDefault = createButton("Default Song");
     button_loadDefault.mousePressed(loadDefaultSong);
 
 
@@ -135,11 +136,13 @@ function setup() {
 
     createElement('p');
 
-    button_togglePlayback = createButton("play/pause");
+    button_togglePlayback = createButton("Play/Pause");
     button_togglePlayback.mousePressed(toggleSong);
 
-    button_restart = createButton("restart song");
+    button_restart = createButton("Restart Song");
     button_restart.mousePressed(restartSong);
+    checkbox_leftHandMode = createCheckbox('Left-handed Mode');
+
     createElement('p');
     createA('https://github.com/briansgithub/music_visualizer/blob/main/README.md', 'Instructions in the Readme', '_blank');;
 
@@ -147,7 +150,7 @@ function setup() {
     slider_exaggerationExponent = createSlider(0, 7, 6, 0.01);
     slider_barScale = createSlider(0, 4, 1, 0.01);
 
-    slider_sumBarExaggerationExponent = createSlider(0, 7, 6, 0.01);
+    slider_sumBarExaggerationExponent = createSlider(0, 7, 2, 0.01);
 //    slider_sumBarScale = createSlider(0, 4, 1, 0.01);
 
     createElement('h4', 'Enter BPM: ');

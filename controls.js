@@ -36,41 +36,46 @@ To prevent any default behavior for this event, add "return false" to the end of
 */
 function keyPressed() {
     let retval;
+    let rh = !checkbox_leftHandMode.checked();
 
     switch (key) {
         case ' ':
             toggleSong();
             retval = false;
             break;
-        case 'a':
+        case (rh ? 'a' : ';'):
             //radio.selected() is bugged, per https://github.com/processing/p5.js/pull/5604
             let labelFormat = radio_noteLabelingConvention.value() == 'absolute' ? 'relative' : 'absolute';
             radio_noteLabelingConvention.selected(labelFormat);
             retval = false;
             break;
-        case 'c':
+        case (rh ? 'c' : 'n'):
             let index = colorSchemes.indexOf(radio_colorScheme.value());
             radio_colorScheme.selected(colorSchemes[++index % colorSchemes.length]);
             updateColors();
             retval = false;
             break;
-        case 'd':
+        case (rh ? 'd' : 'k'):
             if (checkbox_dimAccidentals.checked()) {
                 checkbox_dimAccidentals.checked(false);
             } else {
                 checkbox_dimAccidentals.checked(true);
             }
-          //updateColors(); necessary, because for some reason, the function "checkbox_dimAccidentals.changed(...);" only activates when the checkbox is changed using mouse click
+            //updateColors(); necessary, because for some reason, the function "checkbox_dimAccidentals.changed(...);" only activates when the checkbox is changed using mouse click
             updateColors();
             retval = false;
             break;
-            case 's':
-                globalKeySigRoot = mod(++globalKeySigRoot, 12);
-                updateColors();
-                retval = false;
-                break;
-        case 'f':
-            globalKeySigRoot = mod(--globalKeySigRoot, 12);
+        case 'r':
+            restartSong();
+            retval = false;
+            break;
+        case (rh ? 's' : 'l'):
+            globalKeySigRoot = mod(globalKeySigRoot+7, 12);
+            updateColors();
+            retval = false;
+            break;
+        case (rh ? 'f' : 'j'):
+            globalKeySigRoot = mod(globalKeySigRoot-7, 12);
             updateColors();
             retval = false;
             break;

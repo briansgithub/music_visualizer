@@ -11,18 +11,20 @@ See the legend for the currently selected key signature and mapping of notes to 
 SPACE: play/pause song.  
 LEFT_ARROW: jump -3 seconds  
 RIGHT_ARROW: jump + 3 seconds  
-d: dim accidentals   
-r: restart song  
-c: color scheme cycle  
-a: absolute vs. relative notation toggle
-s: sharp the key signature. Cycle forward, +1 semitone.
-f: flat the key signature. Cycle backward, -1 semitone.
+
+**d**/k: **d**im accidentals   
+**r**: **r**estart song  
+**c**/n: **c**olor scheme cycle  
+**a**/;: **a**bsolute (note names) vs. relative (Scale Degree) notation toggle
+**s**/l: **s**harp added to key signature. Cycle forward 1 key signature.
+**f**/j: **f**lat added to the key signature. Cycle backward 1 key signature.
+"Left-handed mode" mirrors keyboard shortcuts (except 'r') on the keyboard.  
 
 Colored rectangles are captured on each beat and indicate the loudest pitch class at that time.  
 Left click on a Beat Rectangle to jump to that time in the song.  
 
 "Consonance order" colors the notes based on the consonance of the interval they make with respect to the tonic.  
-Consonance is defined as being LCM(num,den) where num and den are the numerator and denominator of the frequency ratio that the interval makes with respect to the tonic in Just Intonation tuning.
+Consonance is defined as being LCM(num, den) where num and den are the numerator and denominator of the frequency ratio that the interval makes with respect to the tonic in Just Intonation tuning.
 
 |Interval	    |num	|den	|LCM    |  
 | ---------     | ----- | ----- | ----- |
