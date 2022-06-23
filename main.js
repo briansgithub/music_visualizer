@@ -14,10 +14,11 @@
 //TSDef provides typescript definitions for intellisense (function documentation, autocompletion)
 "use strict";
 
+let fromFile = true; 
 
 //-----------------------------------------------------------------------------
-let defaultBPM = 190;
-let globalKeySigRoot = 4;
+let defaultBPM = 88;
+let globalKeySigRoot = 3;
 let globalBPM = defaultBPM;
 
 let globalFFTObj;
@@ -36,11 +37,12 @@ let button_Cb, button_Gb, button_Db, button_Ab, button_Eb, button_Bb, button_F, 
 
 let projectFont;
 
-
-
+let song;
+let songName = "Hikoukigumo.mp3";
+let songDuration;
 
 function preload() {
-    //song = loadSound(songName);
+    if (!fromFile) { song = loadSound(songName); }
     // song.reversed = true;
     projectFont = loadFont('Calibri.ttf');
 }
@@ -63,6 +65,10 @@ let button_restart;
 let slider_barScale; // used to linearly scale bars
 let slider_exaggerationExponent; //used as a power to make tall bars taller and short bars shorter.
 
+//let slider_sumBarScale; 
+let slider_sumBarExaggerationExponent; 
+
+const colorSchemes = ['linearChromatic', 'consonanceOrder', 'circleOfFifths'];
 let checkbox_dimAccidentals;
 
 let input_BPM;
@@ -81,30 +87,43 @@ function restartSong() {
 
 function toggleSong() { song.isPlaying() ? song.pause() : song.play(); }
 
-let song;
-let songName = "@angelDream.mp3";
-let songDuration;
 
-function loadDefaultSong(){
-    song = loadSound(songName);
-    defaultBPM = 190;
-    globalKeySigRoot = 4;
+
+function loadDefaultSong() {
+    song = loadSound(songName, songInit);
+    defaultBPM = 88;
+    globalKeySigRoot = 3;
 }
 
+function songInit() {
+    globalFFTObj = new p5.FFT(smoothVal, Math.pow(2, 12));
+    globalAmplitudeObj = new p5.Amplitude();
+    songDuration = song.duration();
+    console.log(song);
+    audioIsLoaded = true;
+    song.play();
+
+    button_fileInput.remove();
+    button_loadDefault.remove();
+}
+
+let button_fileInput;
 let button_loadDefault;
 let audioIsLoaded = false;
 function setup() {
 
    /* Load sound from file */
-    createFileInput(file => {
+
+    button_fileInput = createFileInput(file => {
         song = loadSound(file.data, _ => {
-            globalFFTObj = new p5.FFT(smoothVal, Math.pow(2, 12));
-            globalAmplitudeObj = new p5.Amplitude();
-            songDuration = song.duration();
-            console.log(song);
-            audioIsLoaded = true;
+            songInit();
         });
     });
+
+
+    button_loadDefault = createButton("Default song");
+    button_loadDefault.mousePressed(loadDefaultSong);
+
 
     /*
     button_loadDefault = createButton("Load default song");
@@ -128,11 +147,14 @@ function setup() {
     slider_exaggerationExponent = createSlider(0, 7, 6, 0.01);
     slider_barScale = createSlider(0, 4, 1, 0.01);
 
+    slider_sumBarExaggerationExponent = createSlider(0, 7, 6, 0.01);
+//    slider_sumBarScale = createSlider(0, 4, 1, 0.01);
+
     createElement('h4', 'Enter BPM: ');
     checkbox_beatDetect = createCheckbox('automatic beat detection (not yet implemented)', false);
     checkbox_beatDetect.changed(toggleBeatDetection);
 
-    input_BPM = createInput(globalBPM);
+    input_BPM = createInput(str(globalBPM));
     input_BPM.changed(updateBPM);
 
     button_BPMEnter = createButton('Enter');
@@ -173,6 +195,7 @@ function setup() {
     const radioParent_noteLabelingConventions = createDiv();
     radioParent_noteLabelingConventions.id = "radioParent_noteLabelingConventions";
     radio_noteLabelingConvention = createRadio('radioParent_noteLabelingConventions');
+    fixRadio(radio_noteLabelingConvention); //can remove this on p5.js versions >v1.4.1
     radio_noteLabelingConvention.option('absolute', 'Note names')
     radio_noteLabelingConvention.option('relative', 'Scale Degrees')
     radio_noteLabelingConvention.selected('relative');
@@ -181,11 +204,15 @@ function setup() {
     const radioParent_colorSchemes = createDiv();
     radioParent_colorSchemes.id = "radioParent_colorSchemes";
     radio_colorScheme = createRadio('radioParent_colorSchemes');
+    fixRadio(radio_colorScheme); //can remove this on p5.js versions >v1.4.1
     radio_colorScheme.option('linearChromatic', 'Linear, chromatic');
     radio_colorScheme.option('consonanceOrder', 'Consonance order');
     radio_colorScheme.option('circleOfFifths', 'Circle of 5ths (not implemented)');
     radio_colorScheme.selected('consonanceOrder');
+    radio_colorScheme.changed(updateColors);
+
     checkbox_dimAccidentals = createCheckbox('Dim accidentals', true);
+    checkbox_dimAccidentals.changed(updateColors);
 
     //    createElement('h4', 'Smoothing slider (broken): ');
     //    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
@@ -193,7 +220,8 @@ function setup() {
     if (volumeSlider) { slider_Volume = createSlider(0, 2, 1, 0.01); }
     //    slider_Speed = createSlider(0, 3, 1, 0.01);
 
-
+    initColorTable();
+    updateColors();
 
 }
 
@@ -223,22 +251,55 @@ function draw() {
 // odd accidentals  are normally their respective note number -6.
 // even accidentals are normally the same number as their respective note between notes 0 thru 6
 // even accidentals are normally 12 - the number of their respective note between notes 6 thru 12
-function keySig0() { globalKeySigRoot = 0; }//C
-function keySig1() { globalKeySigRoot = 1; }//C#/Db
-function keySig2() { globalKeySigRoot = 2; }//D
-function keySig3() { globalKeySigRoot = 3; }//Eb
-function keySig4() { globalKeySigRoot = 4; }//E
-function keySig5() { globalKeySigRoot = 5; }//F
-function keySig6() { globalKeySigRoot = 6; }//F#/Gb
-function keySig7() { globalKeySigRoot = 7; }//G
-function keySig8() { globalKeySigRoot = 8; }//G#/Ab
-function keySig9() { globalKeySigRoot = 9; }//A
-function keySig10() { globalKeySigRoot = 10; }//Bb
-function keySig11() { globalKeySigRoot = 11; }// B/Cb
+function keySig0() { globalKeySigRoot = 0; updateColors() }//C
+function keySig1() { globalKeySigRoot = 1; updateColors() }//C#/Db
+function keySig2() { globalKeySigRoot = 2; updateColors() }//D
+function keySig3() { globalKeySigRoot = 3; updateColors() }//Eb
+function keySig4() { globalKeySigRoot = 4; updateColors() }//E
+function keySig5() { globalKeySigRoot = 5; updateColors() }//F
+function keySig6() { globalKeySigRoot = 6; updateColors() }//F#/Gb
+function keySig7() { globalKeySigRoot = 7; updateColors() }//G
+function keySig8() { globalKeySigRoot = 8; updateColors() }//G#/Ab
+function keySig9() { globalKeySigRoot = 9; updateColors() }//A
+function keySig10() { globalKeySigRoot = 10; updateColors() }//Bb
+function keySig11() { globalKeySigRoot = 11; updateColors() }// B/Cb
 
 function toggleBeatDetection() {
     if (checkbox_beatDetect.checked()) {
     } else {
     }
+}
+
+/*Patch code from:
+https://discourse.processing.org/t/calling-selected-value-multiple-times-on-a-radio-button-does-not-change-the-selected-option/35194
+*/
+function fixRadio(radio) {
+    let self = radio;
+    self.selected = function (value) {
+        let result = null;
+        if (value === undefined) {
+            for (const option of self._getOptionsArray()) {
+                if (option.checked) {
+                    result = option;
+                    break;
+                }
+            }
+        } else {
+            // deselect all first (Google Chrome wigs out when multiple options have the checked attribute set to true)
+            self._getOptionsArray().forEach(option => {
+                option.checked = false;
+                option.removeAttribute("checked");
+            });
+            for (const option of self._getOptionsArray()) {
+                if (option.value === value) {
+                    option.setAttribute("checked", true);
+                    option.checked = true;
+                    result = option;
+                    break;
+                }
+            }
+        }
+        return result;
+    };
 }
 

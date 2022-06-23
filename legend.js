@@ -33,7 +33,7 @@ function drawLegend() {
     const keySigXPos = legendXPos - legendHeight;
     rect(keySigXPos, legendYPos, legendHeight); 
     textSize(.5 * legendHeight);
-    strokeWeight(0);
+    strokeWeight(1);
     textAlign(CENTER, CENTER);
     fill('black');
     text(rootToKeySigSymbol(globalKeySigRoot), keySigXPos + legendHeight / 2, legendYPos + legendHeight / 2); 
@@ -45,20 +45,15 @@ function drawLegend() {
     let swatchSize = legendHeight / 3;
     textSize(swatchSize - .5);
     let numTones = 12;
-    for (let i = 0; i < numTones; i++) {
-        let swatchXPos = legendXPos + i * legendWidth / (numTones) + legendWidth / (numTones * 2);
+    for (let pitchClass = 0; pitchClass < numTones; pitchClass++) {
+
+        let relativeInterval = mod(pitchClass + globalKeySigRoot, 12);
+        let HSBObj_pitchClass = coloringTable[relativeInterval];
+        fill(HSBObj_pitchClass.hue, HSBObj_pitchClass.saturation, HSBObj_pitchClass.brightness);
+
+        let swatchXPos = legendXPos + pitchClass * legendWidth / (numTones) + legendWidth / (numTones * 2);
         let swatchYPos = legendYPos + (2 / 3) * legendHeight;
 
-        let noteHue = applyColorScheme(i);
-        let noteSaturation = 100;
-        let noteBrightness = 100;
-        let alpha = 1;
-        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(i)) {
-            noteSaturation = 0;
-            noteBrightness = 25;
-        }
-
-        fill(noteHue, noteSaturation, noteBrightness, alpha);
         rectMode(CENTER);
         rect(swatchXPos, swatchYPos, swatchSize);
 
@@ -67,10 +62,10 @@ function drawLegend() {
         const textHeight = swatchYPos - 1.25 * swatchSize;
 
         if (radio_noteLabelingConvention.value() == 'absolute') {
-            text(numToSymbol(mod(i + globalKeySigRoot, 12)), swatchXPos, textHeight);
+            text(numToSymbol(relativeInterval), swatchXPos, textHeight);
         }
         else if (radio_noteLabelingConvention.value() == 'relative') {
-            const scaleDegree = specificIntervalToScaleDegree(mod(i, 12));
+            const scaleDegree = specificIntervalToScaleDegree(mod(pitchClass, 12));
             if (scaleDegree) {
                 text(scaleDegree, swatchXPos, textHeight + 1.5);
                 textAlign(CENTER, BASELINE);

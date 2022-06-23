@@ -21,7 +21,7 @@ function mod(n, m) {
     return ((n % m) + m) % m;
   }
 
-/*-1 for the fact that conventional note numbering starts at 1 (not 0). -3 for shifting the 0 note up 3 semitones from A0 to C1 */
+/*-1 for the fact that conventional note numbering starts at 1 (not 0). -3 for shifting the 1st (0th) note from 0 to 9*/
 const kbOffset = mod(-3, 12);
 
 /* Takes in a conventionally named note number (1-88) and outputs the corresponding pitch class in integer notation */

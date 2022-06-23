@@ -6,7 +6,6 @@
 "use strict";
 "use strict";
 
-/*--------------------- DRAW PIANO FREQUENCIES ------------------------*/
 function drawSpectrum() {
     for (let conventionalNoteNum = 1; conventionalNoteNum <= 88; conventionalNoteNum++) { //note will conventionally always assume starting indexing at 1 in this block. 
         let noteFreq = noteToFreq_(conventionalNoteNum); //Math.pow(Math.pow(2, 1 / 12), note - 49) * 440; underscore b/c "noteToFreq" is alrady defined somewhere in backend library code
@@ -24,31 +23,38 @@ function drawSpectrum() {
 
 
         let freqVolScaled = freqVol;
+        const maxEnergy = 255;
         freqVolScaled = Math.pow(freqVol, slider_exaggerationExponent.value()); //scaled so tall bars are even taller and short bars are even shorter.
 
-        let barHeight = map(freqVolScaled, 0, Math.pow(255, slider_exaggerationExponent.value()), 0, height / 2); //exponentially exaggerate differences between bars
-        barHeight *= Math.pow(slider_barScale.value(), slider_exaggerationExponent.value()); // linearly scale up bar heights by scale factor and exaggerationExponent
+        const maxExaggeration = Math.pow(255, slider_exaggerationExponent.value());
+        let barHeight = map(freqVolScaled, 0, maxExaggeration, 0, height / 2); //exponentially exaggerate differences between bars
+
+        const scaleFactor = Math.pow(slider_barScale.value(),slider_exaggerationExponent.value()); 
+        // scale factor increases more with larger exaggeration exponent
+        // linearly scale up bar heights by scale factor and exaggerationExponent
+        barHeight *= scaleFactor; 
         barHeight = -barHeight;
 
 
         colorMode(HSB);
-        let noteHue;
-        let relativeInterval = conventionalNoteToPitchClass(conventionalNoteNum - globalKeySigRoot);
 
-        noteHue = applyColorScheme(relativeInterval);
-        let noteSaturation = 100;
+        let pitchClass = conventionalNoteToPitchClass(conventionalNoteNum);
+        let relativeInterval = mod(pitchClass - globalKeySigRoot, 12);
+        let HSBObj_pitchClass = coloringTable[pitchClass];
+
         let noteBrightness = map(Math.log2(freqVol), 0, 8, 0, 100); //freqVol ranges from 0 to 255
-        let alpha = 1;
+        
         if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(relativeInterval)) {
-            noteSaturation = 0;
-            alpha = .15;
+            noteBrightness = 20;
         }
-        stroke(color(noteHue, noteSaturation, noteBrightness, alpha));
+
+        stroke(color(HSBObj_pitchClass.hue, HSBObj_pitchClass.saturation, noteBrightness));
         //stroke(strokeColor(note));
         strokeWeight(5);
-        line((width / 2 - 20) / 88 * conventionalNoteNum, height - 50, (width / 2 - 20) / 88 * conventionalNoteNum, (height - 50) + barHeight);
-        /*--------------------- END DRAW PIANO FREQUENCIES ------------------------*/
 
+        const posX = (width / 2 - 20) / 88 * conventionalNoteNum;
+        const posY = height - 50;
+        line(posX, posY, posX, (height - 50) + barHeight);
 
         /*--- Draw the note labels ---*/
         textFont(projectFont);
@@ -58,7 +64,7 @@ function drawSpectrum() {
         textSize(7);
 
         textAlign(CENTER, CENTER);
-        text(numToSymbol(conventionalNoteToPitchClass(conventionalNoteNum)), (width / 2 - 20) / 88 * conventionalNoteNum - 2, height - 37);
+        text(numToSymbol(conventionalNoteToPitchClass(conventionalNoteNum)), posX, height - 37);
         /*--- End Draw the note labels ---*/
     }
 }

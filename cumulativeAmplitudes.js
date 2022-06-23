@@ -5,35 +5,51 @@
 /// <reference path="coloring.js" />
 "use strict";
 
-/*----- Draw cumulative amplitude by pitch class bars ----- */
-function drawCumulativeAmplitudes(){
-    /* ----- Sum amplitudes of same pitch classes*/
-    let pitchClassVolumes = new Array(12).fill(0);
+function BarObject(pitchClass, amplitude) {
+    this.amplitude = amplitude;
+    this.pitchClass = pitchClass;
+}
 
-    for (let i = 0; i <= 87; i++) {
-        pitchClassVolumes[conventionalNoteToPitchClass(i + 1)] += currentSpectrum[i];
+function drawCumulativeAmplitudes() {
+    let accumulator = new Array(12).fill(0);
+    let accumulatorObjs = [];
+    for (let note = 1; note <= 88; note++) {
+        let pitchClass = conventionalNoteToPitchClass(note);
+        accumulator[pitchClass] += currentSpectrum[note - 1];
+    }
+    let maxCumulativeVolume = max(accumulator);
+
+    if (song.isPlaying()) {
+        for (let i = 0; i < accumulator.length; i++) {
+            accumulatorObjs.push(new BarObject(i, accumulator[i]));
+        }
     }
 
-    let maxCumulativeVolume = max(pitchClassVolumes);
-
+    accumulatorObjs.sort(function (a, b) { return b.amplitude - a.amplitude });
+    
     colorMode(HSB);
 
-    for (let pitchClass = 0; pitchClass < pitchClassVolumes.length; pitchClass++) {
-        let pitchClassHue = applyColorScheme(pitchClass);
-        let pitchClassSaturation = 100;
-        let pitchClassBrightness = 100
-        let alpha = 1;
-        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(pitchClass)) {
-            pitchClassSaturation = 0;
-            alpha = .15;
-        }
+    for (let i = 0; i < accumulatorObjs.length; i++) {
+        let pitchClass = accumulatorObjs[i].pitchClass;
+        let amplitude = accumulatorObjs[i].amplitude;
 
-        let barHeight = map(pitchClassVolumes[pitchClass], 0, maxCumulativeVolume, 0, height / 2);
+        let HSBObj_pitchClass = coloringTable[pitchClass];
+
+        stroke(color(HSBObj_pitchClass.hue, HSBObj_pitchClass.saturation, HSBObj_pitchClass.brightness));
+        strokeWeight(5);
+
+        let barHeight = map(amplitude, 0, maxCumulativeVolume, 0, height / 2);
+
+        let amplitudeScaled = Math.pow(amplitude, slider_sumBarExaggerationExponent.value()); //scaled so tall bars are even taller and short bars are even shorter.
+
+        const maxExaggeration = Math.pow(maxCumulativeVolume, slider_sumBarExaggerationExponent.value());
+
+        barHeight = map(amplitudeScaled, 0, maxExaggeration, 0, height/2);
         barHeight = -barHeight;
 
-        stroke(color(pitchClassHue, pitchClassSaturation, pitchClassBrightness, alpha));
-        strokeWeight(5);
-        line((width / 2) * (1 + pitchClass / 88), height - 50, (width / 2) * (1 + pitchClass / 88), (height - 50) + barHeight);
+        const posX = (width / 2) * (1 + i / 88);
+        const posY = height - 50;
+        line(posX, posY, posX, (height - 50) + barHeight);
 
 
         /*--- Draw Pitch Class labels ---*/
@@ -44,7 +60,8 @@ function drawCumulativeAmplitudes(){
         textSize(7);
 
         textAlign(CENTER, CENTER);
-        text(numToSymbol(pitchClass), (width / 2) * (1 + pitchClass / 88), height - 37);
+        let displaySymbol = radio_noteLabelingConvention.value() == 'absolute' ? numToSymbol(pitchClass) : specificIntervalToScaleDegree(mod(pitchClass - globalKeySigRoot, 12));
+        text(displaySymbol, posX, height - 37);
         /*--- End Draw Pitch Class labels ---*/
     }
 }

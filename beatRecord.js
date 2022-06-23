@@ -27,18 +27,12 @@ function BeatRectangle(beatNo, loudestPitchClass, timestamp) {
 
 
     this.displayBeat = function () {
-        let specificInterval = mod(this.loudestPitchClass - globalKeySigRoot, 12) //no +kbShift because "loudestPitchClass" normalized for C = 0
-        colorMode(HSB);
         noStroke();
+        colorMode(HSB);
 
-        let updatedColorHue = applyColorScheme(specificInterval); //marker
-        let noteSaturation = 100;
-        let alpha = 1;
-        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(specificInterval)) {
-            noteSaturation = 0;
-            alpha = .15;
-        }
-        fill(updatedColorHue, noteSaturation, 100, alpha);
+        let HSBObj_pitchClass = coloringTable[this.loudestPitchClass];
+        fill(HSBObj_pitchClass.hue, HSBObj_pitchClass.saturation, HSBObj_pitchClass.brightness);
+
         rect(this.x1Position, this.y1Position, this.width, this.height);
     }
 }

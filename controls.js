@@ -42,12 +42,36 @@ function keyPressed() {
             toggleSong();
             retval = false;
             break;
+        case 'a':
+            //radio.selected() is bugged, per https://github.com/processing/p5.js/pull/5604
+            let labelFormat = radio_noteLabelingConvention.value() == 'absolute' ? 'relative' : 'absolute';
+            radio_noteLabelingConvention.selected(labelFormat);
+            retval = false;
+            break;
+        case 'c':
+            let index = colorSchemes.indexOf(radio_colorScheme.value());
+            radio_colorScheme.selected(colorSchemes[++index % colorSchemes.length]);
+            updateColors();
+            retval = false;
+            break;
         case 'd':
             if (checkbox_dimAccidentals.checked()) {
                 checkbox_dimAccidentals.checked(false);
             } else {
                 checkbox_dimAccidentals.checked(true);
             }
+          //updateColors(); necessary, because for some reason, the function "checkbox_dimAccidentals.changed(...);" only activates when the checkbox is changed using mouse click
+            updateColors();
+            retval = false;
+            break;
+            case 's':
+                globalKeySigRoot = mod(++globalKeySigRoot, 12);
+                updateColors();
+                retval = false;
+                break;
+        case 'f':
+            globalKeySigRoot = mod(--globalKeySigRoot, 12);
+            updateColors();
             retval = false;
             break;
         default:
@@ -73,3 +97,6 @@ function keyPressed() {
     }
     return retval; //blocks default browser keypress behavior
 }
+
+
+
