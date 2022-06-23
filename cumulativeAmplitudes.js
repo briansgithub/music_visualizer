@@ -25,12 +25,19 @@ function drawCumulativeAmplitudes() {
         }
     }
 
-    accumulatorObjs.sort(function (a, b) { return b.amplitude - a.amplitude });
-    
+    let displaySorted = false;
+    if (displaySorted) {
+        accumulatorObjs.sort(function (a, b) { return b.amplitude - a.amplitude });
+    }
+
     colorMode(HSB);
 
     for (let i = 0; i < accumulatorObjs.length; i++) {
         let pitchClass = accumulatorObjs[i].pitchClass;
+        if (!displaySorted) {
+            pitchClass = mod(pitchClass + globalKeySigRoot, 12); //this line actually converts the pitch class to a relative interval
+        }
+
         let amplitude = accumulatorObjs[i].amplitude;
 
         let HSBObj_pitchClass = coloringTable[pitchClass];
