@@ -8,17 +8,17 @@
 
 See the legend for the currently selected key signature and mapping of notes to colors.  
 
-| Shortcut | LH Mode Shortcut| Action |  
-| -------- | --------------- | ------ |
-|SPACE|SPACE| play/pause song|  
-|← |← | jump -3 seconds  |
-|→ |→ | jump + 3 seconds |  
-|**D** | K | **D**im accidentals|  
-|**R** | R | **R**estart song|  
-|**C** | N | **C**olor scheme cycle|  
-|**A** | ; | **A**bsolute (note names) vs. relative (Scale Degree) notation toggle|  
-|**S** | L | **S**harp added to key signature. Cycle forward 1 key signature.|  
-|**F** | J | **F**lat added to the key signature. Cycle backward 1 key signature.|  
+| Shortcut | Action |  
+| -------- | ------ |
+|SPACE| Play/Pause song|  
+|→ | Jump + 3 seconds |  
+|← | Jump -3 seconds  |
+|**D** | **D**im accidentals|  
+|**R** | **R**estart song|  
+|**C** | **C**olor scheme cycle|  
+|**A** | **A**bsolute (note names) vs. relative (Scale Degree) notation toggle|  
+|**S** | **S**harp added to key signature. Cycle forward 1 key signature.|  
+|**F** | **F**lat added to the key signature. Cycle backward 1 key signature.|  
 
 "Left-handed mode" mirrors all of the keyboard shortcuts (except 'r') on the keyboard.  
 

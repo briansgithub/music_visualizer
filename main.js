@@ -110,7 +110,7 @@ function songInit() {
 let button_fileInput;
 let button_loadDefault;
 let audioIsLoaded = false;
-let checkbox_leftHandMode;
+//let checkbox_leftHandMode;
 function setup() {
 
    /* Load sound from file */
@@ -141,7 +141,7 @@ function setup() {
 
     button_restart = createButton("Restart Song");
     button_restart.mousePressed(restartSong);
-    checkbox_leftHandMode = createCheckbox('Left-handed Mode');
+//    checkbox_leftHandMode = createCheckbox('Left-handed Mode');
 
     createElement('p');
     createA('https://github.com/briansgithub/music_visualizer/blob/main/README.md', 'Instructions in the Readme', '_blank');;

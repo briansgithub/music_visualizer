@@ -36,7 +36,8 @@ To prevent any default behavior for this event, add "return false" to the end of
 */
 function keyPressed() {
     let retval;
-    let rh = !checkbox_leftHandMode.checked();
+//    const rh = !checkbox_leftHandMode.checked();
+    const rh = true;
 
     switch (key) {
         case ' ':
@@ -67,7 +68,6 @@ function keyPressed() {
             break;
         case 'r':
             restartSong();
-            retval = false;
             break;
         case (rh ? 's' : 'l'):
             globalKeySigRoot = mod(globalKeySigRoot+7, 12);
