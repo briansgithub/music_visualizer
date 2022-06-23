@@ -1,4 +1,4 @@
-﻿# Music Visualizer Readme
+﻿# Music Visualizer ReadMe
 
 1. Upload a song to analyze using the "Choose File" button or select the "Default Song" button.
 2. Enter the BPM of the song in the text entry box.  
@@ -8,17 +8,19 @@
 
 See the legend for the currently selected key signature and mapping of notes to colors.  
 
-SPACE: play/pause song.  
-LEFT_ARROW: jump -3 seconds  
-RIGHT_ARROW: jump + 3 seconds  
+| Shortcut | LH Mode Shortcut| Action |  
+| -------- | --------------- | ------ |
+|SPACE|SPACE| play/pause song|  
+|← |← | jump -3 seconds  |
+|→ |→ | jump + 3 seconds |  
+|**D** | K | **D**im accidentals|  
+|**R** | R | **R**estart song|  
+|**C** | N | **C**olor scheme cycle|  
+|**A** | ; | **A**bsolute (note names) vs. relative (Scale Degree) notation toggle|  
+|**S** | L | **S**harp added to key signature. Cycle forward 1 key signature.|  
+|**F** | J | **F**lat added to the key signature. Cycle backward 1 key signature.|  
 
-**d**/k: **d**im accidentals   
-**r**: **r**estart song  
-**c**/n: **c**olor scheme cycle  
-**a**/;: **a**bsolute (note names) vs. relative (Scale Degree) notation toggle
-**s**/l: **s**harp added to key signature. Cycle forward 1 key signature.
-**f**/j: **f**lat added to the key signature. Cycle backward 1 key signature.
-"Left-handed mode" mirrors keyboard shortcuts (except 'r') on the keyboard.  
+"Left-handed mode" mirrors all of the keyboard shortcuts (except 'r') on the keyboard.  
 
 Colored rectangles are captured on each beat and indicate the loudest pitch class at that time.  
 Left click on a Beat Rectangle to jump to that time in the song.  
