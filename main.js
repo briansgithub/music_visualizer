@@ -209,8 +209,8 @@ function setup() {
     radio_colorScheme = createRadio('radioParent_colorSchemes');
     fixRadio(radio_colorScheme); //can remove this on p5.js versions >v1.4.1
     radio_colorScheme.option('linearChromatic', 'Linear, chromatic');
-    radio_colorScheme.option('consonanceOrder', 'Consonance order');
-    radio_colorScheme.option('circleOfFifths', 'Circle of 5ths (not implemented)');
+    radio_colorScheme.option('consonanceOrder', 'Consonance Order');
+    radio_colorScheme.option('circleOfFifths', 'Circle of Fifths');
     radio_colorScheme.selected('consonanceOrder');
     radio_colorScheme.changed(updateColors);
 

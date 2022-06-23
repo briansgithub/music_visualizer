@@ -25,8 +25,13 @@ See the legend for the currently selected key signature and mapping of notes to 
 Colored rectangles are captured on each beat and indicate the loudest pitch class at that time.  
 Left click on a Beat Rectangle to jump to that time in the song.  
 
-"Consonance order" colors the notes based on the consonance of the interval they make with respect to the tonic.  
-Consonance is defined as being LCM(num, den) where num and den are the numerator and denominator of the frequency ratio that the interval makes with respect to the tonic in Just Intonation tuning.
+
+"Linear, chromatic" coloring: starts with red on the tonic and gets more blue closer to the Major 7th.
+
+"Circle of Fifths" coloring: redder pitch classes have a more sharp key signature. Bluer pitch classes have a more flat key signature. Magenta note has +/- 6 sharps/flats. 
+
+"Consonance order" coloring: colors the notes based on the consonance of the interval they make with respect to the tonic.  
+Consonance is defined here as the least common multiple of the numerator and denominator of the frequency ratio with respect to the tonic which define the interval in Just Intonation tuning.
 
 |Interval	    |num	|den	|LCM    |  
 | ---------     | ----- | ----- | ----- |

@@ -11,7 +11,7 @@ By default, max HSB values are colorMode(HSB, 360, 100, 100, 1).*/
 let maxHueValue = 300;
 let coloringTable = [];
 
-function HSBObj(hue, saturation, brightness, alpha = 255) {
+function HSBObj(hue = 0, saturation = 100, brightness = 100, alpha = 1) {
     this.hue = hue;
     this.saturation = saturation;
     this.brightness = brightness;
@@ -24,9 +24,10 @@ The color of the pitch class is changed based on the global Key Sig.
 function initColorTable(){
     for(let pitchClass = 0; pitchClass < 12; pitchClass++) {
         let relativeInterval = mod(pitchClass - globalKeySigRoot, 12);
-        let hue = applyColorScheme(relativeInterval);
 
-        coloringTable.push(new HSBObj(hue,100,100,1));
+        let HSBObj_color = applyColorScheme(relativeInterval);
+
+        coloringTable.push(HSBObj_color);
     }
 }
 
@@ -35,10 +36,8 @@ function updateColors() {
     for (let pitchClass = 0; pitchClass < 12; pitchClass++) {
         
         let relativeInterval = mod(pitchClass - globalKeySigRoot, 12);
-        let hue = applyColorScheme(relativeInterval);
-        let saturation = 100;
-        let brightness = 100;
-        let alpha = 1;
+        let HSBObj_color = applyColorScheme(relativeInterval);
+        let brightness = HSBObj_color.brightness;
 
         /*
         console.log("Checked?: " + checkbox_dimAccidentals.checked());
@@ -50,43 +49,83 @@ function updateColors() {
             brightness = 20;
         }
 
-        coloringTable[pitchClass].hue = hue;
-        coloringTable[pitchClass].saturation = saturation;
+        coloringTable[pitchClass].hue = HSBObj_color.hue;
+        coloringTable[pitchClass].saturation = HSBObj_color.saturation;
         coloringTable[pitchClass].brightness = brightness;
-        coloringTable[pitchClass].alpha = alpha;
+        coloringTable[pitchClass].alpha = HSBObj_color.alpha;
     }
 
 }
 
 function colorByLinearChromatic(note) {
-    return (maxHueValue / 12) * note; //HSB(0,100,100,1) is red. 
+    
+    return new HSBObj((maxHueValue / 12) * note); //HSB(0,100,100,1) is red. 
 }
 
 function colorByConsonanceOrder(note) {
     let noteSortedIndex = intervalsOrderedByConsonance[note];
-    return (maxHueValue / 12) * noteSortedIndex;
+    return new HSBObj((maxHueValue / 12) * noteSortedIndex);
 }
 
-function colorByCircleOfFifths(note) {
-    return maxHueValue;
+function colorByCircleOfFifths(relativeInterval) {
+
+    //hardcode the sharps and flats in circle of fifths instead of solving linear congruence
+    //indexed by pitch class
+    let hardcodedCOFAccidentals = [0, -5, 2, -3, 4, -1, -6, 1, -4, 3, -2, 5];
+    let currentAccidentals = hardcodedCOFAccidentals[0];
+    let targetAccidentals = hardcodedCOFAccidentals[relativeInterval];
+    let red = 0
+    let blue = 240;
+    let magenta = 300;
+    let returnHue;
+    let returnSaturation = 100;
+    let returnBrightness = 100; 
+
+    const cmpVal = mod(targetAccidentals-currentAccidentals,12);
+    if(cmpVal == 0 ){
+        returnHue = red;
+        returnSaturation = 0;
+    } else if (cmpVal > 6) {
+        returnHue = red;
+        returnSaturation = abs(100*((cmpVal-6)/5));
+    } else if (cmpVal < 6) {
+        returnHue = blue;
+        returnSaturation = abs(100*(cmpVal/5));
+
+    } else {
+        returnHue = magenta; 
+        returnSaturation = 100;
+    }
+    
+    /*
+    returnBrightness = 100-returnSaturation;
+    returnSaturation = 0;
+    */
+
+    let HSBObj_returncolor = new HSBObj();
+    HSBObj_returncolor.hue = returnHue;
+    HSBObj_returncolor.saturation = returnSaturation;
+    HSBObj_returncolor.brightness = returnBrightness;
+
+    return HSBObj_returncolor;
 }
 
 function applyColorScheme(relativeInterval) {
-    let returnHue;
+    let HSBObj_returnColor;
 
     switch (radio_colorScheme.value()) {
         case "linearChromatic":
-            returnHue = colorByLinearChromatic(relativeInterval);
-            break;
-        case "circleOfFifths":
-            returnHue = colorByCircleOfFifths(relativeInterval);
+            HSBObj_returnColor = colorByLinearChromatic(relativeInterval);
             break;
         case "consonanceOrder":
-            returnHue = colorByConsonanceOrder(relativeInterval);
+            HSBObj_returnColor = colorByConsonanceOrder(relativeInterval);
+            break;
+        case "circleOfFifths":
+            HSBObj_returnColor = colorByCircleOfFifths(relativeInterval);
             break;
         default:
-            returnHue = 0;
+            HSBObj_returnColor = 0;
     }
 
-    return returnHue;
+    return HSBObj_returnColor;
 }
