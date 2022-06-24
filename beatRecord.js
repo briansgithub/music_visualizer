@@ -5,11 +5,7 @@
 /// <reference path="coloring.js" />
 "use strict";
 
-function hoverText(mouseX, mouseY){
-    for (let i = 0; i < beatRecord.length; i++) {
-        beatRecord[i].hover(mouseX, mouseY);
-    }
-}
+
 
 let prevBeatNo = 0;
 let beatNo = 0;

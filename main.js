@@ -29,7 +29,6 @@ let firstBeatDelay;
 let bkgrBrightness = 0;
 let smoothVal = 0.01; //replaces slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
 
-let currentSpectrum = []; //88 notes with freq values of notes being played right now.
 let amplitudeLog = [];
 let beatRecord = []; // log of all the beatRectangle objects
 
@@ -148,7 +147,7 @@ function setup() {
 
     createElement('h4', 'Amplitude Difference Exaggeration and Linear Scaling sliders:');
     slider_exaggerationExponent = createSlider(0, 7, 6, 0.01);
-    slider_barScale = createSlider(0, 4, 1, 0.01);
+    slider_barScale = createSlider(0, 4, 1.1, 0.01);
 
     slider_sumBarExaggerationExponent = createSlider(0, 7, 2, 0.01);
 //    slider_sumBarScale = createSlider(0, 4, 1, 0.01);
@@ -231,21 +230,23 @@ function setup() {
 
 function draw() {
     if (audioIsLoaded) {
-        if (song.isPlaying()) {
-            background(bkgrBrightness);
-        }
+        background(bkgrBrightness);
         let spectrum = globalFFTObj.analyze();
         if (volumeSlider) { song.setVolume(slider_Volume.value()); }
         //    song.rate(slider_Speed.value());
         //    song.pan(slider_Pan.value());
 
-        drawLegend();
+        if (song.isPlaying()) {
+            logSpectrum();
+            logCumulativeAmplitudes();
+            logBeat();
+        }
         drawSpectrum();
         drawCumulativeAmplitudes();
-        logBeat();
         drawBeats();
+        drawLegend();
         drawVolumeGraph();
-        hoverText(mouseX,mouseY);
+        hoverText(mouseX, mouseY);
 
         /* Draw progress bar */
         let tickerX = map(song.currentTime(), 0, song.duration(), 0, width);
@@ -253,8 +254,18 @@ function draw() {
         rectMode(CORNER);
         fill('white');
         rect(tickerX, height / 3, 2, 15);
-
+        /* End draw progress indicator */
     }
+}
+
+function hoverText(mouseX, mouseY){
+    for (let i = 0; i < beatRecord.length; i++) {
+        beatRecord[i].hover(mouseX, mouseY);
+    }
+    for (let i = 0; i < currentSpectrum.length; i++) {
+//        currentSpectrum[i].hover(mouseX, mouseY);
+    }
+
 }
 
 //I don't know why there's a 12-n, 5*n, 12-n, 5*n,... pattern
@@ -283,8 +294,9 @@ function toggleBeatDetection() {
 }
 
 function displaySymbol(pitchClass, xPos, yPos, size, color = 'black'){
-    noStroke();
+    textAlign(CENTER,CENTER);
     textSize(size);
+    noStroke();
     fill(color);
     let relativeInterval = pitchClassToRelativeInterval(pitchClass);
 
