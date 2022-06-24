@@ -1,4 +1,5 @@
 ﻿# Music Visualizer ReadMe
+https://briansgithub.github.io/music_visualizer/
 
 1. Upload a song to analyze using the "Choose File" button or select the "Default Song" button.
 2. Enter the BPM of the song in the text entry box. Or enter a different desired sample rate. 2xBPM is a good choice.  
@@ -54,3 +55,5 @@ Amplitude graph is overlaid on the beat record only for reference and aesthetics
 Snake_case is used only when Hungarian Notation is used to indicate variable type in the form [type]_[identifier].  
 
 Hover Scrub added for now in lieu of an easy way to adjust tempo. 
+
+It's good to analyze what's going on harmonically on the beats (spikes in the amplitude graph). 
