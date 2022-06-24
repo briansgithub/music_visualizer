@@ -6,21 +6,20 @@
 "use strict";
 
 let maxVol = 0;
+let amplitudeLog = [];
 
-function drawVolumeGraph() {
-    /*--------------------- DRAW AMPLITUDE GRAPH ------------------------*/
+function logVolumePoints() {
     var vol = globalAmplitudeObj.getLevel();
     //only log an amplitudeLog entry when the current time/total time has crossed a pixel boundary.
-    let currentPixel = floor(width *(song.currentTime()/song.duration()));
-    if (song.isPlaying() && currentPixel >= amplitudeLog.length + 1) {
-        amplitudeLog.push(vol);
-        if (vol > maxVol) { maxVol = vol; }
+    let currentPixel = floor(width * (song.currentTime() / song.duration()));
+    amplitudeLog[currentPixel] = (vol);
+    if (vol > maxVol) {
+        maxVol = vol;
     }
-/*
-    fill('white');
-    textSize(32);
-    text(amplitudeLog[amplitudeLog.length-1], width/2, height/2);
-*/
+}
+
+function drawVolumeGraph() {
+
     let baselineY = height / 3;
     //horizontal line
     stroke('white');

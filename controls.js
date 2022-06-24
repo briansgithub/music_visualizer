@@ -36,9 +36,10 @@ To prevent any default behavior for this event, add "return false" to the end of
 */
 function keyPressed() {
     let retval;
-//    const rh = !checkbox_leftHandMode.checked();
+    //    const rh = !checkbox_leftHandMode.checked();
     const rh = true;
 
+    let jumpDur = 3; //seconds
     switch (key) {
         case ' ':
             toggleSong();
@@ -67,39 +68,52 @@ function keyPressed() {
             retval = false;
             break;
         case 'e':
-            slider_exaggerationExponent.value(slider_exaggerationExponent.value() +.05);
-            retval = false; 
-            break;
-        case 'w':
-            slider_exaggerationExponent.value(slider_exaggerationExponent.value() -.05);
-            retval = false; 
+            slider_exaggerationExponent.value(slider_exaggerationExponent.value() + .05);
+            retval = false;
             break;
         case 'E':
             slider_barScale.value(slider_barScale.value() + .05);
             retval = false;
             break;
-        case 'W':
-            slider_barScale.value(slider_barScale.value() - .05);
-            retval = false; 
+        case (rh ? 'f' : 'j'):
+            globalKeySigRoot = mod(globalKeySigRoot - 7, 12);
+            updateColors();
+            retval = false;
+            break;
+        case ('h'):
+            if (checkbox_hoverScrub.checked()) {
+                checkbox_hoverScrub.checked(false);
+            } else {
+                checkbox_hoverScrub.checked(true);
+            }
+            retval = false;
+            break;
+        case 'q':
+            if (song.currentTime() > jumpDur) {
+                song.jump(song.currentTime() - jumpDur);
+            }
+            retval = false;
             break;
         case 'r':
             restartSong();
             break;
         case (rh ? 's' : 'l'):
-            globalKeySigRoot = mod(globalKeySigRoot+7, 12);
+            globalKeySigRoot = mod(globalKeySigRoot + 7, 12);
             updateColors();
             retval = false;
             break;
-        case (rh ? 'f' : 'j'):
-            globalKeySigRoot = mod(globalKeySigRoot-7, 12);
-            updateColors();
+        case 'w':
+            slider_exaggerationExponent.value(slider_exaggerationExponent.value() - .05);
+            retval = false;
+            break;
+        case 'W':
+            slider_barScale.value(slider_barScale.value() - .05);
             retval = false;
             break;
         default:
             console.log('Unrecognized \'key\' pressed');
     }
 
-    let jumpDur = 3; //seconds
     switch (keyCode) {
         case LEFT_ARROW:
             if (song.currentTime() > jumpDur) {

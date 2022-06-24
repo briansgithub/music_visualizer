@@ -29,7 +29,6 @@ let firstBeatDelay;
 let bkgrBrightness = 0;
 let smoothVal = 0.01; //replaces slider_smoothVal.value() - Number between 0 and 1 for visual damping of spectrum
 
-let amplitudeLog = [];
 let beatRecord = []; // log of all the beatRectangle objects
 
 let button_Cb, button_Gb, button_Db, button_Ab, button_Eb, button_Bb, button_F, button_C, button_G, button_D, button_A, button_E, button_B, button_Cs;
@@ -49,11 +48,12 @@ function preload() {
 let bpmPromptText;
 let button_BPMEnter;
 let checkbox_beatDetect;
+let checkbox_hoverScrub;
 
 let radio_noteLabelingConvention;
 let radio_colorScheme;
 
-let volumeSlider = true;
+let volumeSlider = false;
 if (volumeSlider) { var slider_Volume; }
 //let slider_Speed;
 //let slider_Pan;
@@ -215,6 +215,9 @@ function setup() {
 
     checkbox_dimAccidentals = createCheckbox('Dim accidentals', true);
     checkbox_dimAccidentals.changed(updateColors);
+    
+    createElement('p');
+    checkbox_hoverScrub = createCheckbox('Hover Scrub (Danger! Will break audio object)', false);
 
     //    createElement('h4', 'Smoothing slider (broken): ');
     //    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
@@ -236,16 +239,22 @@ function draw() {
         //    song.rate(slider_Speed.value());
         //    song.pan(slider_Pan.value());
 
+        if(checkbox_hoverScrub.checked()){
+            hoverScrub();
+        }
+
         if (song.isPlaying()) {
             logSpectrum();
             logCumulativeAmplitudes();
-            logBeat();
+            logBeat(); 
+            logVolumePoints();
         }
         drawSpectrum();
         drawCumulativeAmplitudes();
         drawBeats();
         drawLegend();
         drawVolumeGraph();
+
         hoverText(mouseX, mouseY);
 
         /* Draw progress bar */
@@ -255,6 +264,13 @@ function draw() {
         fill('white');
         rect(tickerX, height / 3, 2, 15);
         /* End draw progress indicator */
+    }
+}
+
+function hoverScrub() {
+    let timestamp = map(mouseX, 0, width, 0, song.duration());
+    if (timestamp > 0 && timestamp < song.duration()) {
+        song.jump(timestamp);
     }
 }
 
@@ -268,6 +284,7 @@ function hoverText(mouseX, mouseY) {
     for (let i = 0; i < accumulatorObjs.length; i++) {
         accumulatorObjs[i].hover(mouseX, mouseY);
     }
+    return;
 }
 
 //I don't know why there's a 12-n, 5*n, 12-n, 5*n,... pattern

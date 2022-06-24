@@ -16,17 +16,18 @@ Interactions:
 | Shortcut | Action |  
 | -------- | ------ |
 |SPACE| Play/Pause song|  
-|→ | Jump + 3 seconds. (bug: can cause inaccurate volume/frequency sampling)|  
-|← | Jump -3 seconds. (bug: can cause inaccurate volume/frequency sampling)|
-|**d** | **D**im accidentals|  
-|**r** | **R**estart song|  
-|**c** | **C**olor scheme cycle|  
+|→ | Jump + 3 seconds. |  
+|← | Jump -3 seconds. |
 |**a** | **A**bsolute (note names) vs. relative (Scale Degree) notation toggle|  
-|**s** | **S**harp added to key signature. Cycle forward 1 key signature.|  
-|**f** | **F**lat added to the key signature. Cycle backward 1 key signature.|  
+|**c** | **C**olor scheme cycle|  
+|**d** | **D**im accidentals|  
 |**e** | **E**xaggerate the difference between bar heights.|
+|Shift + **e** | Linearly scale up bar heights.|
+|**f** | **F**lat added to the key signature. Cycle backward 1 key signature.|  
+|**q** | Jump -3 seconds. Same as ←|  
+|**r** | **R**estart song|  
+|**s** | **S**harp added to key signature. Cycle forward 1 key signature.|  
 |**w** | **W**eaken the difference between bar heights.|
-|Shift + **E** | Linearly scale up bar heights.|
 |Shift + **W** | Linearly scale down bar heights.|
 
 Color Schemes: 
@@ -49,4 +50,7 @@ Color Schemes:
 |minor 2nd	    |   16  |15	    |240    | 
 |tritone	    |   45	|32	    |1440   | 
   
+Amplitude graph is overlaid on the beat record only for reference and aesthetics.  
 Snake_case is used only when Hungarian Notation is used to indicate variable type in the form [type]_[identifier].  
+
+Hover Scrub added for now in lieu of an easy way to adjust tempo. 
