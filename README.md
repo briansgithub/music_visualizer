@@ -6,7 +6,12 @@
 4. Adjust "Linear Scaling" slider to make spectrum bars fit on the screen. 
 5. Click the key signature buttons to  change the coloring of the notes displayed.  
 
-See the legend for the currently selected key signature and mapping of notes to colors.  
+Colored rectangles are captured on each beat. The color indicates the loudest pitch class at that time.  
+See the legend for the mapping of notes to colors and the currently selected key signature.  
+
+Interactions: 
+* Left click on a Beat Rectangle to jump to that time in the song.  
+* Hover over objects to inspect their pitch class. 
 
 | Shortcut | Action |  
 | -------- | ------ |
@@ -24,20 +29,10 @@ See the legend for the currently selected key signature and mapping of notes to 
 |Shift + **E** | Linearly scale up bar heights.|
 |Shift + **W** | Linearly scale down bar heights.|
 
-
-
-"Left-handed mode" mirrors all of the keyboard shortcuts (except 'r') on the keyboard.  
-
-Colored rectangles are captured on each beat and indicate the loudest pitch class at that time.  
-Left click on a Beat Rectangle to jump to that time in the song.  
-
-
-"Linear, chromatic" coloring: starts with red on the tonic and gets more blue closer to the Major 7th.
-
-"Circle of Fifths" coloring: redder pitch classes have a more sharp key signature. Bluer pitch classes have a more flat key signature. Magenta note has +/- 6 sharps/flats. 
-
-"Consonance order" coloring: colors the notes based on the consonance of the interval they make with respect to the tonic.  
-Consonance is defined here as the least common multiple of the numerator and denominator of the frequency ratio with respect to the tonic which define the interval in Just Intonation tuning.
+Color Schemes: 
+* "Linear, chromatic" coloring: starts with red on the tonic and gets more blue closer to the Major 7th.
+* "Consonance order" coloring: colors the notes based on the consonance of the interval they make with respect to the tonic note. Consonance is approximated as when multiples of the smaller wavelength fit exactly within a multiple of the larger wavelength. The fewer wavelengths required before the nodes of the two waves overalap, the more consonant the interval. Specifically, consonance is defined here as the least common multiple of the numerator and denominator of the frequency ratio with respect to the tonic which define the interval in Just Intonation tuning. 
+* "Circle of Fifths" coloring: redder pitch classes have a more sharp key signature. Bluer pitch classes have a more flat key signature. Magenta note has +/- 6 sharps/flats. 
 
 |Interval	    |num	|den	|LCM    |  
 | ---------     | ----- | ----- | ----- |
@@ -54,4 +49,4 @@ Consonance is defined here as the least common multiple of the numerator and den
 |minor 2nd	    |   16  |15	    |240    | 
 |tritone	    |   45	|32	    |1440   | 
   
-camelCase is used for all identifiers except when Hungarian variable naming notation is used to indicate variable type. Hungarian notation is used with snake case separating [type]_[identifier].  
+Snake_case is used only when Hungarian Notation is used to indicate variable type in the form [type]_[identifier].  

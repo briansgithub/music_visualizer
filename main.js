@@ -258,14 +258,16 @@ function draw() {
     }
 }
 
-function hoverText(mouseX, mouseY){
+function hoverText(mouseX, mouseY) {
     for (let i = 0; i < beatRecord.length; i++) {
         beatRecord[i].hover(mouseX, mouseY);
     }
-    for (let i = 0; i < currentSpectrum.length; i++) {
-//        currentSpectrum[i].hover(mouseX, mouseY);
+    for (let i = 0; i < currentSpectrumBarObjs.length; i++) {
+        currentSpectrumBarObjs[i].hover(mouseX, mouseY);
     }
-
+    for (let i = 0; i < accumulatorObjs.length; i++) {
+        accumulatorObjs[i].hover(mouseX, mouseY);
+    }
 }
 
 //I don't know why there's a 12-n, 5*n, 12-n, 5*n,... pattern
