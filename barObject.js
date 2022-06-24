@@ -26,7 +26,7 @@ function BarObject(pitchClass, magnitude, posX, posY, brightness = 100) {
             rectMode(CENTER);
             rect(boxCenterX, boxCenterY, boxSize);
 
-            displaySymbol(this.pitchClass, boxCenterX, boxCenterY + .1 * boxSize, 16);
+            displaySymbol(this.pitchClass, boxCenterX, boxCenterY, 16);
         }
     }
 

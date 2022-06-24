@@ -320,14 +320,15 @@ function displaySymbol(pitchClass, xPos, yPos, size, color = 'black'){
     let relativeInterval = pitchClassToRelativeInterval(pitchClass);
 
     if (radio_noteLabelingConvention.value() == 'absolute') {
+        textAlign(CENTER, CENTER);
         text(numToSymbol(pitchClass), xPos, yPos);
     }
     else if (radio_noteLabelingConvention.value() == 'relative') {
         const scaleDegree = specificIntervalToScaleDegree(mod(relativeInterval, 12));
         if (scaleDegree) {
-            text(scaleDegree, xPos, yPos);
+            text(scaleDegree, xPos, yPos + .16 * size);
             textAlign(CENTER, BASELINE);
-            text('^', xPos, yPos - 0.16*size);
+            text('^', xPos, yPos);
         }
     }
 }

@@ -67,6 +67,3 @@ function drawSpectrum() {
     }
 }
 
-function spectrumHover(mouseX, mouseY) {
-
-}
