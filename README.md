@@ -1,7 +1,7 @@
 ﻿# Music Visualizer ReadMe
 
 1. Upload a song to analyze using the "Choose File" button or select the "Default Song" button.
-2. Enter the BPM of the song in the text entry box.  
+2. Enter the BPM of the song in the text entry box. Or enter a different desired sample rate. 2xBPM is a good choice.  
 3. Adjust the "Amplitude Difference Exaggeration" slider to make notes stand out more.  
 4. Adjust "Linear Scaling" slider to make spectrum bars fit on the screen. 
 5. Click the key signature buttons to  change the coloring of the notes displayed.  
