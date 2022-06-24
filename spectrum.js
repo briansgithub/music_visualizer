@@ -44,10 +44,6 @@ function logSpectrum() {
 
         let noteBrightness = map(Math.log2(freqVol), 0, 8, 0, 100); //freqVol ranges from 0 to 255
 
-        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(relativeInterval)) {
-            noteBrightness = 20;
-        }
-
         const posX = (width / 2 - 20) / 88 * conventionalNoteNum;
         const posY = height - 50;
 

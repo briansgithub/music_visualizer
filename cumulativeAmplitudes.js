@@ -29,9 +29,6 @@ function logCumulativeAmplitudes() {
 
         let relativeInterval = pitchClassToRelativeInterval(i);
         let brightness = 100;
-        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(relativeInterval)) {
-            brightness = 20;
-        }
 
         const posX = (width / 2) * (1 + relativeInterval / 88);
         const posY = height - 50;

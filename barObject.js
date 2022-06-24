@@ -38,6 +38,9 @@ function BarObject(pitchClass, magnitude, posX, posY, brightness = 100) {
         let brightness = this.brightness;
 
         let HSBObj_pitchClass = coloringTable[pitchClass];
+        if (checkbox_dimAccidentals.checked() && accidentalIntervals.includes(pitchClassToRelativeInterval(pitchClass))) {
+            brightness = 20;
+        }
 
         colorMode(HSB);
         stroke(color(HSBObj_pitchClass.hue, HSBObj_pitchClass.saturation, brightness));
