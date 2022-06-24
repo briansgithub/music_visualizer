@@ -5,6 +5,11 @@
 /// <reference path="coloring.js" />
 "use strict";
 
+function hoverText(mouseX, mouseY){
+    for (let i = 0; i < beatRecord.length; i++) {
+        beatRecord[i].hover(mouseX, mouseY);
+    }
+}
 
 let prevBeatNo = 0;
 let beatNo = 0;
@@ -18,10 +23,35 @@ function BeatRectangle(beatNo, loudestPitchClass, timestamp) {
     this.height = height / 3 - 7;
     this.loudestPitchClass = loudestPitchClass;
     this.timestamp = timestamp;
-    this.clicked = function () {
+    this.clicked = function(mouseX, mouseY) {
         if ((mouseX >= this.x1Position) && (mouseX <= this.x1Position + this.width)
             && (mouseY >= this.y1Position) && (mouseY <= this.y1Position + this.height)) {
             song.jump(this.timestamp);
+        }
+    }
+
+    this.hover = function(mouseX, mouseY){
+        let boxCenterX = this.x1Position;
+        let boxCenterY = this.y1Position + this.height + 30;
+        let boxSize = 25;
+        if ((mouseX >= this.x1Position) && (mouseX <= this.x1Position + this.width)
+            && (mouseY >= this.y1Position) && (mouseY <= this.y1Position + this.height)) {
+               
+                stroke('gray');
+                strokeWeight(2);
+                fill('white');
+                rectMode(CENTER);
+            rect(boxCenterX, boxCenterY, boxSize);
+
+            /*
+            noStroke();
+            fill('black');
+            textSize(16);
+            textAlign(CENTER, CENTER);
+            let displaySymbol = radio_noteLabelingConvention.value() == 'absolute' ? numToSymbol(this.loudestPitchClass) : specificIntervalToScaleDegree(mod(this.loudestPitchClass - globalKeySigRoot, 12));
+            text(displaySymbol, boxCenterX, boxCenterY);
+            */
+            displaySymbol(this.loudestPitchClass, boxCenterX, boxCenterY + .1 * boxSize, 16);
         }
     }
 
@@ -64,3 +94,4 @@ function drawBeats() {
         beatRecord[i].displayBeat();
     }
 }
+

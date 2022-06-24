@@ -26,8 +26,17 @@ const kbOffset = mod(-3, 12);
 
 /* Takes in a conventionally named note number (1-88) and outputs the corresponding pitch class in integer notation */
 function conventionalNoteToPitchClass(conventionalNote) {
-    return mod(conventionalNote-1 + kbOffset, 12);
+    return mod(conventionalNote - 1 + kbOffset, 12);
     
+}
+
+function pitchClassToRelativeInterval(pitchClass) {
+    return mod(pitchClass - globalKeySigRoot, 12);
+
+}
+function relativeIntervalToPitchClass(relativeInterval) {
+    return mod(relativeInterval + globalKeySigRoot, 12);
+
 }
 
 /* Translates a note from integer notation to the standard musical notation */

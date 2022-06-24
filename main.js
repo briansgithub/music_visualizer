@@ -245,6 +245,15 @@ function draw() {
         logBeat();
         drawBeats();
         drawVolumeGraph();
+        hoverText(mouseX,mouseY);
+
+        /* Draw progress bar */
+        let tickerX = map(song.currentTime(), 0, song.duration(), 0, width);
+        noStroke();
+        rectMode(CORNER);
+        fill('white');
+        rect(tickerX, height / 3, 2, 15);
+
     }
 }
 
@@ -270,6 +279,25 @@ function keySig11() { globalKeySigRoot = 11; updateColors() }// B/Cb
 function toggleBeatDetection() {
     if (checkbox_beatDetect.checked()) {
     } else {
+    }
+}
+
+function displaySymbol(pitchClass, xPos, yPos, size, color = 'black'){
+    noStroke();
+    textSize(size);
+    fill(color);
+    let relativeInterval = pitchClassToRelativeInterval(pitchClass);
+
+    if (radio_noteLabelingConvention.value() == 'absolute') {
+        text(numToSymbol(pitchClass), xPos, yPos);
+    }
+    else if (radio_noteLabelingConvention.value() == 'relative') {
+        const scaleDegree = specificIntervalToScaleDegree(mod(relativeInterval, 12));
+        if (scaleDegree) {
+            text(scaleDegree, xPos, yPos);
+            textAlign(CENTER, BASELINE);
+            text('^', xPos, yPos - 0.16*size);
+        }
     }
 }
 
@@ -305,4 +333,5 @@ function fixRadio(radio) {
         return result;
     };
 }
+
 

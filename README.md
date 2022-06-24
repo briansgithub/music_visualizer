@@ -11,14 +11,20 @@ See the legend for the currently selected key signature and mapping of notes to 
 | Shortcut | Action |  
 | -------- | ------ |
 |SPACE| Play/Pause song|  
-|→ | Jump + 3 seconds |  
-|← | Jump -3 seconds  |
-|**D** | **D**im accidentals|  
-|**R** | **R**estart song|  
-|**C** | **C**olor scheme cycle|  
-|**A** | **A**bsolute (note names) vs. relative (Scale Degree) notation toggle|  
-|**S** | **S**harp added to key signature. Cycle forward 1 key signature.|  
-|**F** | **F**lat added to the key signature. Cycle backward 1 key signature.|  
+|→ | Jump + 3 seconds. (bug: can cause inaccurate volume/frequency sampling)|  
+|← | Jump -3 seconds. (bug: can cause inaccurate volume/frequency sampling)|
+|**d** | **D**im accidentals|  
+|**r** | **R**estart song|  
+|**c** | **C**olor scheme cycle|  
+|**a** | **A**bsolute (note names) vs. relative (Scale Degree) notation toggle|  
+|**s** | **S**harp added to key signature. Cycle forward 1 key signature.|  
+|**f** | **F**lat added to the key signature. Cycle backward 1 key signature.|  
+|**e** | **E**xaggerate the difference between bar heights.|
+|**w** | **W**eaken the difference between bar heights.|
+|Shift + **E** | Linearly scale up bar heights.|
+|Shift + **W** | Linearly scale down bar heights.|
+
+
 
 "Left-handed mode" mirrors all of the keyboard shortcuts (except 'r') on the keyboard.  
 

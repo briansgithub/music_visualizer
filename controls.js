@@ -13,7 +13,7 @@
 
 function mousePressed() {
     for (let i = 0; i < beatRecord.length; i++) {
-        beatRecord[i].clicked();
+        beatRecord[i].clicked(mouseX, mouseY);
     }
 }
 
@@ -65,6 +65,22 @@ function keyPressed() {
             //updateColors(); necessary, because for some reason, the function "checkbox_dimAccidentals.changed(...);" only activates when the checkbox is changed using mouse click
             updateColors();
             retval = false;
+            break;
+        case 'e':
+            slider_exaggerationExponent.value(slider_exaggerationExponent.value() +.05);
+            retval = false; 
+            break;
+        case 'w':
+            slider_exaggerationExponent.value(slider_exaggerationExponent.value() -.05);
+            retval = false; 
+            break;
+        case 'E':
+            slider_barScale.value(slider_barScale.value() + .05);
+            retval = false;
+            break;
+        case 'W':
+            slider_barScale.value(slider_barScale.value() - .05);
+            retval = false; 
             break;
         case 'r':
             restartSong();

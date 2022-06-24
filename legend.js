@@ -45,13 +45,13 @@ function drawLegend() {
     let swatchSize = legendHeight / 3;
     textSize(swatchSize - .5);
     let numTones = 12;
-    for (let pitchClass = 0; pitchClass < numTones; pitchClass++) {
+    for (let relativeInterval = 0; relativeInterval < numTones; relativeInterval++) {
 
-        let relativeInterval = mod(pitchClass + globalKeySigRoot, 12);
-        let HSBObj_pitchClass = coloringTable[relativeInterval];
+        let pitchClass = mod(relativeInterval + globalKeySigRoot, 12);
+        let HSBObj_pitchClass = coloringTable[pitchClass];
         fill(HSBObj_pitchClass.hue, HSBObj_pitchClass.saturation, HSBObj_pitchClass.brightness);
 
-        let swatchXPos = legendXPos + pitchClass * legendWidth / (numTones) + legendWidth / (numTones * 2);
+        let swatchXPos = legendXPos + relativeInterval * legendWidth / (numTones) + legendWidth / (numTones * 2);
         let swatchYPos = legendYPos + (2 / 3) * legendHeight;
 
         rectMode(CENTER);
@@ -59,17 +59,17 @@ function drawLegend() {
 
         fill('black');
         textAlign(CENTER, CENTER);
-        const textHeight = swatchYPos - 1.25 * swatchSize;
+        const textY = swatchYPos - 1.25 * swatchSize;
 
         if (radio_noteLabelingConvention.value() == 'absolute') {
-            text(numToSymbol(relativeInterval), swatchXPos, textHeight);
+            text(numToSymbol(pitchClass), swatchXPos, textY);
         }
         else if (radio_noteLabelingConvention.value() == 'relative') {
-            const scaleDegree = specificIntervalToScaleDegree(mod(pitchClass, 12));
+            const scaleDegree = specificIntervalToScaleDegree(mod(relativeInterval, 12));
             if (scaleDegree) {
-                text(scaleDegree, swatchXPos, textHeight + 1.5);
+                text(scaleDegree, swatchXPos, textY + 1.5);
                 textAlign(CENTER, BASELINE);
-                text('^', swatchXPos, textHeight);
+                text('^', swatchXPos, textY);
             }
         }
 
