@@ -7,6 +7,7 @@ https://briansgithub.github.io/music_visualizer/
 4. Adjust "Linear Scaling" slider to make spectrum bars fit on the screen. 
 5. Click the key signature buttons to  change the coloring of the notes displayed.  
 
+The frequency spectrum of the song is binned into the notes of an 88-key piano keyboard.  
 Colored rectangles are captured on each beat. The color indicates the loudest pitch class at that time.  
 See the legend for the mapping of notes to colors and the currently selected key signature.  
 
@@ -52,7 +53,7 @@ Color Schemes:
 |tritone	    |   45	|32	    |1440   | 
   
 Amplitude graph is overlaid on the beat record only for reference and aesthetics.  
-Snake_case is used only when Hungarian Notation is used to indicate variable type in the form [type]_[identifier].  
+Snake_case is used only when Hungarian-like notation is used to indicate variable type in the form [type]_[identifier].  
 
 Hover Scrub added for now in lieu of an easy way to adjust tempo. 
 
