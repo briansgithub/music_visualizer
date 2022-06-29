@@ -64,8 +64,8 @@ function BeatRectangle(beatNo, loudestPitchClass, timestamp) {
 }
 
 function logBeat() {
-    let currentTime = song.currentTime();
-    beatNo = Math.trunc(currentTime / (60 / globalBPM));
+    let currentTimestamp = song.currentTime();
+    beatNo = Math.trunc(currentTimestamp / (60 / globalBPM));
 
     if (beatNo != prevBeatNo && //prevents an initial box when song not playing and a residual box when song restarted. 
         !beatRecord.some(BeatRectangle => BeatRectangle.beatNo === beatNo)) {//check if object doesn't already exist in array
@@ -79,7 +79,7 @@ function logBeat() {
             }
         }
 
-        beatRecord.splice(beatNo, 0, new BeatRectangle(beatNo, loudestPitchClass, currentTime));
+        beatRecord.splice(beatNo, 0, new BeatRectangle(beatNo, loudestPitchClass, currentTimestamp));
     }
 
     prevBeatNo = beatNo;

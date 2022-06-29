@@ -7,18 +7,19 @@
 "use strict";
 
 let loopMarkerState = 0;
-let loopMark1, loopMark2;
+let loopMark1 = -1;
+let loopMark2 = -1;
 
 function loopMarker(){
     console.log(loopMarkerState);
-    let currentTime = song.currentTime();
+    let currentTimestamp = song.currentTime();
     switch(loopMarkerState){
         case 0:
-            loopMark1 = currentTime;
+            loopMark1 = currentTimestamp;
             break;
 
         case 1:
-            loopMark2 = currentTime;
+            loopMark2 = currentTimestamp;
             if(loopMark2 < loopMark1){
                 let tmp = loopMark1;
                 loopMark1 = loopMark2;
@@ -37,13 +38,16 @@ function loopMarker(){
     
 }
 
-function drawLoopMarkers(){
-
+function drawLoopMarkers() {
     let marker1X = map(loopMark1, 0, song.duration(), 0, width);
     let marker2X = map(loopMark2, 0, song.duration(), 0, width);
     noStroke();
     rectMode(CORNER);
     fill('white');
-    rect(marker1X, height / 3, 2, 15);
-    rect(marker2X, height / 3, 2, 15);
+    if (loopMark1 > 0) {
+        rect(marker1X, height / 3, 2, 15);
+    }
+    if (loopMark2 > 0) {
+        rect(marker2X, height / 3, 2, 15);
+    }
 } 

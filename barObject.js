@@ -15,10 +15,12 @@ function BarObject(pitchClass, magnitude, posX, posY, brightness = 100) {
         let boxSize = 25;
         let boxCenterX = mouseX;
         let boxCenterY = mouseY - boxSize;
-        if ((mouseX >= (this.posX-(this.width+1)/2)) && 
-            (mouseX <= (this.posX + (this.width+1)/2)) && 
-            (mouseY >= (this.posY - this.magnitude)) && 
-            (mouseY <= posY )) {
+        if ((mouseX >= (this.posX - (this.width + 1) / 2)) &&
+            (mouseX <= (this.posX + (this.width + 1) / 2)) &&
+            (mouseY <= posY) &&
+            (mouseY >= (this.posY - this.magnitude)) &&
+            ((this.posY - this.magnitude) >= height / 3)
+        ) { 
 
             stroke('gray');
             strokeWeight(2);

@@ -131,8 +131,10 @@ function setup() {
     button_loadDefault.mousePressed(loadDefaultSong);
     
 
-    createElement('plaintext', 'Volume (adjust if spectrum bars are clipping):');
-    if (volumeSlider) { slider_Volume = createSlider(0, 1, 1, 0.01); }
+    if (volumeSlider) {
+        createElement('plaintext', 'Volume (adjust if spectrum bars are clipping):');
+        slider_Volume = createSlider(.01, 1, 1, 0.01);
+    }
 
 
     createElement('p');
@@ -239,8 +241,8 @@ function draw() {
 
         drawLoopMarkers();
         if (loopMarkerState == 2) {
-            let currentTime = song.currentTime();
-            if (currentTime > loopMark2 && currentTime < loopMark2 + .1) {
+            let currentTimeStamp = song.currentTime();
+            if (currentTimeStamp > loopMark2 && currentTimeStamp < loopMark2 + .1) {
                 song.jump(loopMark1);
             }
         }

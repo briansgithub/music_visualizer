@@ -7,15 +7,19 @@
 
 let maxVol = 0;
 let amplitudeLog = [];
+let prevPixel = 0;
+let currentPixel = 0;
 
 function logVolumePoints() {
     var vol = globalAmplitudeObj.getLevel();
-    let scaledVolume = vol/slider_Volume.value();
+    if (volumeSlider) { vol /= slider_Volume.value() };
     //only log an amplitudeLog entry when the current time/total time has crossed a pixel boundary.
     let currentPixel = floor(width * (song.currentTime() / song.duration()));
-    amplitudeLog[currentPixel] = scaledVolume; 
-    if (vol > maxVol) {
-        maxVol = vol;
+    amplitudeLog[currentPixel] = vol;
+    //mitigate against volume spikes due to sudden volume slider changes.
+    //by checking previous pixel instead of continuously updating maxVol to the rolling all-time maximum.
+    if (amplitudeLog[currentPixel - 1] > maxVol) {
+        maxVol = amplitudeLog[currentPixel - 1];
     }
 }
 
