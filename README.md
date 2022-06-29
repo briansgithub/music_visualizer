@@ -30,7 +30,7 @@ Interactions:
 |**q** | Insert loop markers.|  
 |**r** | **R**estart song|  
 |**s** | **S**harp added to key signature. Cycle forward 1 key signature.|  
-|**W** | Linearly scale down bar heights.|
+|**w** | Linearly scale down bar heights.|
 |Shift + **w** | **W**eaken the difference between bar heights.|
 
 Color Schemes: 

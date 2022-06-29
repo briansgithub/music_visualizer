@@ -78,6 +78,7 @@ let checkbox_dimAccidentals;
 let input_BPM;
 function updateBPM() {
     restartSong();
+    maxVol = 0;
     globalBPM = input_BPM.value();
     console.log("BPM: " + globalBPM)
 }
