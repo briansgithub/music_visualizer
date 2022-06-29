@@ -9,12 +9,20 @@
 /// <reference path="cumulativeAmplitudes.js" />
 /// <reference path="beatRecord.js" />
 /// <reference path="main.js" />
+/// <reference path="loopMarkers.js" />
 "use strict";
 
 function mousePressed() {
     for (let i = 0; i < beatRecord.length; i++) {
         beatRecord[i].clicked(mouseX, mouseY);
     }
+    for(let i = 0; i < currentSpectrumBarObjs.length; i++) {
+        currentSpectrumBarObjs[i].clicked(mouseX, mouseY);
+    }
+    for (let i = 0; i < accumulatorObjs.length; i++) {
+        accumulatorObjs[i].clicked(mouseX, mouseY);
+    }
+
 }
 
 /*
@@ -67,17 +75,16 @@ function keyPressed() {
             updateColors();
             retval = false;
             break;
-        case 'e':
+        case 'E':
             slider_exaggerationExponent.value(slider_exaggerationExponent.value() + .05);
             retval = false;
             break;
-        case 'E':
+        case 'e':
             slider_barScale.value(slider_barScale.value() + .05);
             retval = false;
             break;
         case (rh ? 'f' : 'j'):
-            globalKeySigRoot = mod(globalKeySigRoot - 7, 12);
-            updateColors();
+            setGlobalKeySigRoot(mod(globalKeySigRoot - 7, 12));
             retval = false;
             break;
         case ('h'):
@@ -89,24 +96,21 @@ function keyPressed() {
             retval = false;
             break;
         case 'q':
-            if (song.currentTime() > jumpDur) {
-                song.jump(song.currentTime() - jumpDur);
-            }
+            loopMarker();
             retval = false;
             break;
         case 'r':
             restartSong();
             break;
         case (rh ? 's' : 'l'):
-            globalKeySigRoot = mod(globalKeySigRoot + 7, 12);
-            updateColors();
-            retval = false;
-            break;
-        case 'w':
-            slider_exaggerationExponent.value(slider_exaggerationExponent.value() - .05);
+            setGlobalKeySigRoot(mod(globalKeySigRoot + 7, 12));
             retval = false;
             break;
         case 'W':
+            slider_exaggerationExponent.value(slider_exaggerationExponent.value() - .05);
+            retval = false;
+            break;
+        case 'w':
             slider_barScale.value(slider_barScale.value() - .05);
             retval = false;
             break;

@@ -15,8 +15,8 @@ function BarObject(pitchClass, magnitude, posX, posY, brightness = 100) {
         let boxSize = 25;
         let boxCenterX = mouseX;
         let boxCenterY = mouseY - boxSize;
-        if ((mouseX >= (this.posX-this.width/2)) && 
-            (mouseX <= (this.posX + this.width/2)) && 
+        if ((mouseX >= (this.posX-(this.width+1)/2)) && 
+            (mouseX <= (this.posX + (this.width+1)/2)) && 
             (mouseY >= (this.posY - this.magnitude)) && 
             (mouseY <= posY )) {
 
@@ -27,6 +27,15 @@ function BarObject(pitchClass, magnitude, posX, posY, brightness = 100) {
             rect(boxCenterX, boxCenterY, boxSize);
 
             displaySymbol(this.pitchClass, boxCenterX, boxCenterY, 16);
+        }
+    }
+
+    this.clicked = function () {
+        if ((mouseX >= (this.posX-(this.width+1)/2)) && 
+            (mouseX <= (this.posX + (this.width+1)/2)) && 
+            (mouseY >= (this.posY - this.magnitude)) && 
+            (mouseY <= posY )) {
+            setGlobalKeySigRoot(this.pitchClass);
         }
     }
 

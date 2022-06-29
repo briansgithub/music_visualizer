@@ -9,6 +9,7 @@
 /// <reference path="cumulativeAmplitudes.js" />
 /// <reference path="beatRecord.js" />
 /// <reference path="controls.js" />
+/// <reference path="loopMarkers.js" />
 
 
 //TSDef provides typescript definitions for intellisense (function documentation, autocompletion)
@@ -19,6 +20,10 @@ let fromFile = true;
 //-----------------------------------------------------------------------------
 let defaultBPM = 88;
 let globalKeySigRoot = 3;
+function setGlobalKeySigRoot(n){
+    globalKeySigRoot = n;
+    updateColors();
+}
 let globalBPM = defaultBPM;
 
 let globalFFTObj;
@@ -53,7 +58,7 @@ let checkbox_hoverScrub;
 let radio_noteLabelingConvention;
 let radio_colorScheme;
 
-let volumeSlider = false;
+let volumeSlider = true;
 if (volumeSlider) { var slider_Volume; }
 //let slider_Speed;
 //let slider_Pan;
@@ -112,7 +117,8 @@ let audioIsLoaded = false;
 //let checkbox_leftHandMode;
 function setup() {
 
-   /* Load sound from file */
+    createCanvas(1200, 600);
+    background(bkgrBrightness);
 
     button_fileInput = createFileInput(file => {
         song = loadSound(file.data, _ => {
@@ -120,18 +126,13 @@ function setup() {
         });
     });
 
-
     button_loadDefault = createButton("Default Song");
     button_loadDefault.mousePressed(loadDefaultSong);
+    
 
+    createElement('plaintext', 'Volume (fix clipping):');
+    if (volumeSlider) { slider_Volume = createSlider(0, 1, 1, 0.01); }
 
-    /*
-    button_loadDefault = createButton("Load default song");
-    button_loadDefault.mousePressed(loadDefaultSong);
-    */
-
-    createCanvas(1200, 600);
-    background(bkgrBrightness);
 
     createElement('p');
 
@@ -146,7 +147,7 @@ function setup() {
     createA('https://github.com/briansgithub/music_visualizer/blob/main/README.md', 'Instructions in the Readme', '_blank');;
 
     createElement('h4', 'Amplitude Difference Exaggeration and Linear Scaling sliders:');
-    slider_exaggerationExponent = createSlider(0, 7, 6, 0.01);
+    slider_exaggerationExponent = createSlider(0, 12, 6, 0.01);
     slider_barScale = createSlider(0, 4, 1.1, 0.01);
 
     slider_sumBarExaggerationExponent = createSlider(0, 7, 2, 0.01);
@@ -222,7 +223,7 @@ function setup() {
     //    createElement('h4', 'Smoothing slider (broken): ');
     //    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
 
-    if (volumeSlider) { slider_Volume = createSlider(0, 2, 1, 0.01); }
+
     //    slider_Speed = createSlider(0, 3, 1, 0.01);
 
     initColorTable();
@@ -234,6 +235,15 @@ function setup() {
 function draw() {
     if (audioIsLoaded) {
         background(bkgrBrightness);
+
+        drawLoopMarkers();
+        if (loopMarkerState == 2) {
+            let currentTime = song.currentTime();
+            if (currentTime > loopMark2 && currentTime < loopMark2 + .1) {
+                song.jump(loopMark1);
+            }
+        }
+
         let spectrum = globalFFTObj.analyze();
         if (volumeSlider) { song.setVolume(slider_Volume.value()); }
         //    song.rate(slider_Speed.value());
@@ -244,6 +254,7 @@ function draw() {
         }
 
         if (song.isPlaying()) {
+            console.log(song.currentTime());
             logSpectrum();
             logCumulativeAmplitudes();
             logBeat(); 
@@ -293,18 +304,18 @@ function hoverText(mouseX, mouseY) {
 // odd accidentals  are normally their respective note number -6.
 // even accidentals are normally the same number as their respective note between notes 0 thru 6
 // even accidentals are normally 12 - the number of their respective note between notes 6 thru 12
-function keySig0() { globalKeySigRoot = 0; updateColors() }//C
-function keySig1() { globalKeySigRoot = 1; updateColors() }//C#/Db
-function keySig2() { globalKeySigRoot = 2; updateColors() }//D
-function keySig3() { globalKeySigRoot = 3; updateColors() }//Eb
-function keySig4() { globalKeySigRoot = 4; updateColors() }//E
-function keySig5() { globalKeySigRoot = 5; updateColors() }//F
-function keySig6() { globalKeySigRoot = 6; updateColors() }//F#/Gb
-function keySig7() { globalKeySigRoot = 7; updateColors() }//G
-function keySig8() { globalKeySigRoot = 8; updateColors() }//G#/Ab
-function keySig9() { globalKeySigRoot = 9; updateColors() }//A
-function keySig10() { globalKeySigRoot = 10; updateColors() }//Bb
-function keySig11() { globalKeySigRoot = 11; updateColors() }// B/Cb
+function keySig0() { setGlobalKeySigRoot(0); }//C
+function keySig1() { setGlobalKeySigRoot(1); }//C#/Db
+function keySig2() { setGlobalKeySigRoot(2); }//D
+function keySig3() { setGlobalKeySigRoot(3); }//Eb
+function keySig4() { setGlobalKeySigRoot(4); }//E
+function keySig5() { setGlobalKeySigRoot(5); }//F
+function keySig6() { setGlobalKeySigRoot(6); }//F#/Gb
+function keySig7() { setGlobalKeySigRoot(7); }//G
+function keySig8() { setGlobalKeySigRoot(8); }//G#/Ab
+function keySig9() { setGlobalKeySigRoot(9); }//A
+function keySig10() { setGlobalKeySigRoot(10); }//Bb
+function keySig11() { setGlobalKeySigRoot(11); }// B/Cb
 
 function toggleBeatDetection() {
     if (checkbox_beatDetect.checked()) {

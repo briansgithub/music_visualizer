@@ -14,6 +14,7 @@ See the legend for the mapping of notes to colors and the currently selected key
 Interactions: 
 * Left click on a Beat Rectangle to jump to that time in the song.  
 * Hover over objects to inspect their pitch class. 
+* Click on a spectrum bar to change the global root to that pitch class.
 
 | Shortcut | Action |  
 | -------- | ------ |
@@ -23,14 +24,14 @@ Interactions:
 |**a** | **A**bsolute (note names) vs. relative (Scale Degree) notation toggle|  
 |**c** | **C**olor scheme cycle|  
 |**d** | **D**im accidentals|  
-|**e** | **E**xaggerate the difference between bar heights.|
-|Shift + **e** | Linearly scale up bar heights.|
+|**e** | Linearly scale up bar heights.|
+|Shift + **e** | **E**xaggerate the difference between bar heights.|
 |**f** | **F**lat added to the key signature. Cycle backward 1 key signature.|  
-|**q** | Jump -3 seconds. Same as ←|  
+|**q** | Insert loop markers.|  
 |**r** | **R**estart song|  
 |**s** | **S**harp added to key signature. Cycle forward 1 key signature.|  
-|**w** | **W**eaken the difference between bar heights.|
-|Shift + **W** | Linearly scale down bar heights.|
+|**W** | Linearly scale down bar heights.|
+|Shift + **w** | **W**eaken the difference between bar heights.|
 
 Color Schemes: 
 * "Linear, chromatic" coloring: starts with red on the tonic and gets more blue closer to the Major 7th.
