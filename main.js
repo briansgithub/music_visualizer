@@ -131,7 +131,7 @@ function setup() {
     button_loadDefault.mousePressed(loadDefaultSong);
     
 
-    createElement('plaintext', 'Volume (fix clipping):');
+    createElement('plaintext', 'Volume (adjust if spectrum bars are clipping):');
     if (volumeSlider) { slider_Volume = createSlider(0, 1, 1, 0.01); }
 
 
@@ -255,7 +255,6 @@ function draw() {
         }
 
         if (song.isPlaying()) {
-            console.log(song.currentTime());
             logSpectrum();
             logCumulativeAmplitudes();
             logBeat(); 

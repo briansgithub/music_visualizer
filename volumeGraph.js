@@ -10,9 +10,10 @@ let amplitudeLog = [];
 
 function logVolumePoints() {
     var vol = globalAmplitudeObj.getLevel();
+    let scaledVolume = vol/slider_Volume.value();
     //only log an amplitudeLog entry when the current time/total time has crossed a pixel boundary.
     let currentPixel = floor(width * (song.currentTime() / song.duration()));
-    amplitudeLog[currentPixel] = (vol);
+    amplitudeLog[currentPixel] = scaledVolume; 
     if (vol > maxVol) {
         maxVol = vol;
     }
