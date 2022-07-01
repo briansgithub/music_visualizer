@@ -9,7 +9,7 @@ The secondary objective of this project is to provide an engaging way to get exp
 Sheet music and Synthesia piano “tutorial” videos are displayed in an absolute, literal way: that is, they will show you exactly which notes to play on a piano — C, D, E, F, F#, etc. This doesn’t let you transfer what you learn about one song to music to your understanding of music as a whole. You have to be proficient enough at reading sheet music or already skilled enough as a musicion in order to interpret the the notes in the context of the song (in which case, this program probably won’t be too useful for you). Thinking in terms of scale degrees allows you to generalize the patterns that you hear so that you can learn music at a higher level and to be able to recognize the same patterns in other songs and scales.  
  This is best accomplished when you are curious about a specific song or melody and ask questions like  
 * “I just heard something catchy. What scale degrees were just played?”
-* “What is the key signature of this song?” – Play with the key signature buttons to try and figure it out before looking it up. 
+* “What is the key signature of this song?” – Play with the key signature buttons to try and figure it out before looking it up. When "Dim accidentals" is selected, the key signature with the fewest dimmed accidentals is probably the key signature (or relative major of the key signature). When "Consonance Order" color scheme is selected, the key signature with the most red/orange notes (scale degrees one and five) is probably close to the right key signature, assuming the song is in a major key. 
 * “What is the bass note being played?” (The lowest frequency note will give you a good indication what the most important scale degree that is currently being played)
 * How does the bass note relate to the current key signature? 
  
@@ -47,7 +47,7 @@ Absolute note labels currently include numbers for the black notes on the piano 
 
 ## Instructions: 
 1. Upload a song to analyze using the "Choose File" button or select the "Default Song" button.
-2. Enter the BPM of the song in the text entry box. Or enter a different desired sample rate. 2xBPM is a good choice.  
+2. Enter the BPM of the song in the text entry box. Or enter a different desired sample rate. Twice the BPM of the song is a good choice.  
 3. Adjust the "Amplitude Difference Exaggeration" slider to make notes stand out more.  
 4. Adjust "Linear Scaling" slider to make spectrum bars fit on the screen. 
 5. A third slider is provided to make the notes in the cumulative bar graph stand out from each other more. 
