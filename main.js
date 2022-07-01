@@ -130,13 +130,6 @@ function setup() {
     button_loadDefault = createButton("Default Song");
     button_loadDefault.mousePressed(loadDefaultSong);
     
-
-    if (volumeSlider) {
-        createElement('plaintext', 'Volume (adjust if spectrum bars are clipping):');
-        slider_Volume = createSlider(.01, 1, 1, 0.01);
-    }
-
-
     createElement('p');
 
     button_togglePlayback = createButton("Play/Pause");
@@ -150,15 +143,15 @@ function setup() {
     createA('https://github.com/briansgithub/music_visualizer/blob/main/README.md', 'Instructions in the Readme', '_blank');;
 
     createElement('h4', 'Amplitude Difference Exaggeration and Linear Scaling sliders:');
+    createElement('plaintext', 'Spectrum bars');
     slider_exaggerationExponent = createSlider(0, 12, 6, 0.01);
     slider_barScale = createSlider(0, 4, 1.1, 0.01);
-
+    createElement('p');
+    createElement('plaintext', 'Cumulative bars');
     slider_sumBarExaggerationExponent = createSlider(0, 7, 2, 0.01);
 //    slider_sumBarScale = createSlider(0, 4, 1, 0.01);
 
     createElement('h4', 'Enter BPM: ');
-    checkbox_beatDetect = createCheckbox('automatic beat detection (not yet implemented)', false);
-    checkbox_beatDetect.changed(toggleBeatDetection);
 
     input_BPM = createInput(str(globalBPM));
     input_BPM.changed(updateBPM);
@@ -207,21 +200,30 @@ function setup() {
     radio_noteLabelingConvention.selected('relative');
 
     createElement('h4', 'Color Scheme:');
+
+    checkbox_dimAccidentals = createCheckbox('Dim accidentals', true);
+    checkbox_dimAccidentals.changed(updateColors);
+
     const radioParent_colorSchemes = createDiv();
     radioParent_colorSchemes.id = "radioParent_colorSchemes";
     radio_colorScheme = createRadio('radioParent_colorSchemes');
     fixRadio(radio_colorScheme); //can remove this on p5.js versions >v1.4.1
-    radio_colorScheme.option('linearChromatic', 'Linear, chromatic');
     radio_colorScheme.option('consonanceOrder', 'Consonance Order');
+    radio_colorScheme.option('linearChromatic', 'Linear, chromatic');
     radio_colorScheme.option('circleOfFifths', 'Circle of Fifths');
     radio_colorScheme.selected('consonanceOrder');
     radio_colorScheme.changed(updateColors);
 
-    checkbox_dimAccidentals = createCheckbox('Dim accidentals', true);
-    checkbox_dimAccidentals.changed(updateColors);
-    
-    createElement('p');
-    checkbox_hoverScrub = createCheckbox('Hover Scrub (Danger! Will break audio object)', false);
+    createElement('h3', 'Experimental:');
+    checkbox_hoverScrub = createCheckbox('Hover Scrub (Danger! Will break audio object, use CPU, and require refresh)', false);
+    if (volumeSlider) {
+        createElement('plaintext', 'Volume (adjust if spectrum bars are clipping):');
+        slider_Volume = createSlider(.01, 1, 1, 0.01);
+    }
+
+    checkbox_beatDetect = createCheckbox('automatic beat detection (not yet implemented)', false);
+    checkbox_beatDetect.changed(toggleBeatDetection);
+
 
     //    createElement('h4', 'Smoothing slider (broken): ');
     //    slider_smoothVal = createSlider(0, 1, 0.65, 0.01);     
