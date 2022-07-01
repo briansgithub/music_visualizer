@@ -1,21 +1,60 @@
 ﻿# Music Visualizer ReadMe
 https://briansgithub.github.io/music_visualizer/
 
+## Overview 
+The the primary objective of this project allow you to pick apart the melodies and chord progressions in songs of your choice so that you can understand what is musically going on within the song.  
+The secondary objective of this project is to provide an engaging way to get exposure to seeing and hearing scale degrees in a simple, consistent way so that you can interpret songs regardless of which key the songs are played in. Basically, this program is for practicing ear training and getting exposure to music theory using songs of your choice.  
+
+## Motivation
+Sheet music and Synthesia piano “tutorial” videos are displayed in an absolute, literal way: that is, they will show you exactly which notes to play on a piano — C, D, E, F, F#, etc. This doesn’t let you transfer what you learn about one song to music to your understanding of music as a whole. You have to be proficient enough at reading sheet music or already skilled enough as a musicion in order to interpret the the notes in the context of the song (in which case, this program probably won’t be too useful for you). Thinking in terms of scale degrees allows you to generalize the patterns that you hear so that you can learn music at a higher level and to be able to recognize the same patterns in other songs and scales.  
+ This is best accomplished when you are curious about a specific song or melody and ask questions like  
+* “I just heard something catchy. What scale degrees were just played?”
+* “What is the key signature of this song?” – Play with the key signature buttons to try and figure it out before looking it up. 
+* “What is the bass note being played?” (The lowest frequency note will give you a good indication what the most important scale degree that is currently being played)
+* How does the bass note relate to the current key signature? 
+ 
+## Note Labeling 
+Scale degrees are traditionally notated with a caret or “hat” above them, like $\hat{1}, \hat{2}, \hat{3}, \hat{4}, \hat{5}, \hat{6}, \hat{7}$.  
+Absolute note labels currently include numbers for the black notes on the piano due to limited space and also because I haven’t implemented discriminating between enharmonic equivalent notes (e.g., C# and Db) based on scale/context.
+
+[Include an image of the piano keyboard with integer notation here] 
+
+## Regions of information on the page:  
+### Frequency Spectrum 
+* The frequency breakdown of what is currently being played, binned into the **88 notes on a piano**. 
+  #### Interactions
+   * Hover over a bar to see what note/scale degree its color represents. 
+   * Click on a bar to change the currently selected key signature to that note/scale.
+   * Use 'd' key to dim accidentals. 
+### Cumulative Amplitudes
+* 12 bars: sums the volumes of all of the same notes. E.g., the volumes of all ‘C’ notes are summed into the same bar. Volumes of all ‘D’ notes are summed into the same bar.  Always displayed in scale degree order
+  #### Interactions
+   * Hover over a bar to see what note/scale degree its color represents. 
+   * Click on a bar to change the currently selected key signature to that note/scale 
+   * Use 'd' key to dim accidentals. 
+### Beat Rectangles  
+* Based on the manually entered BPM. I recommend using a BPM that is at least twice the BPM of the song (Nyquist Rate), so that you never miss sampling a beat! 
+* A new rectangle is created at the sampling rate entered in the BPM input box. The color of the rectangle indicates the loudest pitch that was being played at that instant in time. 
+  #### Interactions 
+   * Click on a rectangle to jump to that time in the song
+   * Hover over a rectangle to see what note/scale degree its color represents. 
+### Amplitude Graph 
+* This is not too useful, but can be used to  see what part of the song is currently playing and distinguish different sections of the song. 
+* Usually, the notes played on a beat are more important, so pay attention to the scale degrees played when there are spikes in the graph.
+### Legend
+  * Displays the current major key signature selected. Labels can be switched between absolute notation (i.e, note names) and relative notation (i.e., scale degrees) using the ‘a’ key. 
+
+
+## Instructions: 
 1. Upload a song to analyze using the "Choose File" button or select the "Default Song" button.
 2. Enter the BPM of the song in the text entry box. Or enter a different desired sample rate. 2xBPM is a good choice.  
 3. Adjust the "Amplitude Difference Exaggeration" slider to make notes stand out more.  
 4. Adjust "Linear Scaling" slider to make spectrum bars fit on the screen. 
-5. Click the key signature buttons to  change the coloring of the notes displayed.  
+5. A third slider is provided to make the notes in the cumulative bar graph stand out from each other more. 
+6. Click the key signature buttons to change the coloring of the notes displayed.  
+7. Explore the song using the mouse and keyboard shortcuts for the left hand. 
 
-The frequency spectrum of the song is binned into the notes of an 88-key piano keyboard.  
-Colored rectangles are captured on each beat. The color indicates the loudest pitch class at that time.  
-See the legend for the mapping of notes to colors and the currently selected key signature.  
-
-Interactions: 
-* Left click on a Beat Rectangle to jump to that time in the song.  
-* Hover over objects to inspect their pitch class. 
-* Click on a spectrum bar to change the global root to that pitch class.
-
+## Keyboard Shortcuts: 
 | Shortcut | Action |  
 | -------- | ------ |
 |SPACE| Play/Pause song|  
@@ -33,11 +72,18 @@ Interactions:
 |**w** | Linearly scale down bar heights.|
 |Shift + **w** | **W**eaken the difference between bar heights.|
 
-Color Schemes: 
-* "Linear, chromatic" coloring: starts with red on the tonic and gets more blue closer to the Major 7th.
-* "Consonance order" coloring: colors the notes based on the consonance of the interval they make with respect to the tonic note. Consonance is approximated as when multiples of the smaller wavelength fit exactly within a multiple of the larger wavelength. The fewer wavelengths required before the nodes of the two waves overalap, the more consonant the interval. Specifically, consonance is defined here as the least common multiple of the numerator and denominator of the frequency ratio with respect to the tonic which define the interval in Just Intonation tuning. 
-* "Circle of Fifths" coloring: redder pitch classes have a more sharp key signature. Bluer pitch classes have a more flat key signature. Magenta note has +/- 6 sharps/flats. 
+## Color Schemes: 
+  ### Consonance Order
+  * Note colors are based on the consonance of the interval that they make with respect to the tonic note. See below for how I define consonance. 
+  * This is the color scheme I prefer. 
+  ### Linear, chromatic 
+  * Starts with red on the tonic and gets closer to blue as the scale ascends. Loops back to red on the tonic again. 
+  ### Circle of Fifths
+  * Redder pitch classes have a more sharp key signature. Bluer pitch classes have a more flat key signature. Magenta note has +/- 6 sharps/flats.
+  * Not a very useful color scheme in my opinion, but I left it in.  
 
+## Consonance
+Consonance is approximated as when multiples of the smaller wavelength fit exactly within a multiple of the larger wavelength. The fewer wavelengths required before the nodes of the two waves overalap, the more consonant the interval. Specifically, consonance is defined here as the least common multiple of the numerator and denominator of the frequency ratio with respect to the tonic which define the interval in Just Intonation tuning. 
 |Interval	    |num	|den	|LCM    |  
 | ---------     | ----- | ----- | ----- |
 |Unison         |   1	|1	    |1      | 
@@ -53,9 +99,14 @@ Color Schemes:
 |minor 2nd	    |   16  |15	    |240    | 
 |tritone	    |   45	|32	    |1440   | 
   
-Amplitude graph is overlaid on the beat record only for reference and aesthetics.  
-Snake_case is used only when Hungarian-like notation is used to indicate variable type in the form [type]_[identifier].  
+## Misc
+* Snake_case is used only when Hungarian-like notation is used to indicate variable type in the form [type]_[identifier].  
+* Hover Scrub added for now in lieu of an easy way to adjust tempo. 
 
-Hover Scrub added for now in lieu of an easy way to adjust tempo. 
-
-It's good to analyze what's going on harmonically on the beats (spikes in the amplitude graph). 
+## Todo:
+* Implement minor scales and modes
+* Implement ability to change tempo
+* Indicate what the most prominant 3 pitch classes being played are to help identify chords. 
+* Equalizer
+* Prevent spectrum bars from clipping
+* Proper note labels
