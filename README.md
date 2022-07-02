@@ -41,11 +41,11 @@ Sheet music and Synthesia piano “tutorial” videos are displayed in an absolu
 * This is not too useful, but can be used to  see what part of the song is currently playing and distinguish different sections of the song. 
 * Usually, the notes played on a beat are more important, so pay attention to the scale degrees played when there are spikes in the graph.
 ### Legend
-Scale degree notation, dimmed accidentals
+Scale degree notation, dimmed accidentals  
 ![legend_relative_dimmed accidentals](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/legend1.png)  
-Note names notation, dimmed accidentals
+Note names notation, dimmed accidentals  
 ![legend_absolute_dimmed_accidentals](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/legend2.png)  
-Note names notation, undimmed accidentals
+Note names notation, undimmed accidentals  
 ![legend_absolute_undimmed_accidentals](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/legend3.png)
   * Displays the current major key signature selected. Labels can be switched between absolute notation (i.e, note names) and relative notation (i.e., scale degrees) using the ‘a’ key. 
   * Scale degrees are traditionally notated with a caret or “hat” above them, like $\hat{1}, \hat{2}, \hat{3}, \hat{4}, \hat{5}, \hat{6}, \hat{7}$.  
