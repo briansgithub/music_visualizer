@@ -13,26 +13,24 @@ Sheet music and Synthesia piano “tutorial” videos are displayed in an absolu
 * “What is the bass note being played?” (The lowest frequency note will give you a good indication what the most important scale degree that is currently being played)
 * How does the bass note relate to the current key signature? 
  
-## Note Labeling 
-Scale degrees are traditionally notated with a caret or “hat” above them, like $\hat{1}, \hat{2}, \hat{3}, \hat{4}, \hat{5}, \hat{6}, \hat{7}$.  
-Absolute note labels currently include numbers for the black notes on the piano due to limited space and also because I haven’t implemented discriminating between enharmonic equivalent notes (e.g., C# and Db) based on scale/context.
-
-[Include an image of the piano keyboard with integer notation here] 
-
 ## Regions of information on the page:  
 ### Frequency Spectrum 
+![FFT_spectrum](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/spectrum_bars.png)
+
 * The frequency breakdown of what is currently being played, binned into the **88 notes on a piano**. 
   #### Interactions
    * Hover over a bar to see what note/scale degree its color represents. 
    * Click on a bar to change the currently selected key signature to that note/scale.
    * Use 'd' key to dim accidentals. 
 ### Cumulative Amplitudes
+![cumulative_pitch_classes](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/cumulative_bars.png)
 * 12 bars: sums the volumes of all of the same notes. E.g., the volumes of all ‘C’ notes are summed into the same bar. Volumes of all ‘D’ notes are summed into the same bar.  Always displayed in scale degree order
   #### Interactions
    * Hover over a bar to see what note/scale degree its color represents. 
    * Click on a bar to change the currently selected key signature to that note/scale 
    * Use 'd' key to dim accidentals. 
-### Beat Rectangles  
+### Beat Rectangles 
+![beat_rectangles](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/beat_rectangles.png)
 * Based on the manually entered BPM. I recommend using a BPM that is at least twice the BPM of the song (Nyquist Rate), so that you never miss sampling a beat! 
 * A new rectangle is created at the sampling rate entered in the BPM input box. The color of the rectangle indicates the loudest pitch that was being played at that instant in time. 
   #### Interactions 
@@ -42,8 +40,14 @@ Absolute note labels currently include numbers for the black notes on the piano 
 * This is not too useful, but can be used to  see what part of the song is currently playing and distinguish different sections of the song. 
 * Usually, the notes played on a beat are more important, so pay attention to the scale degrees played when there are spikes in the graph.
 ### Legend
+![legend_relative_dimmed accidentals](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/legend1.png)  
+![legend_absolute_dimmed_accidentals](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/legend2.png)  
+![legend_absolute_undimmed_accidentals](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/legend3.png)
   * Displays the current major key signature selected. Labels can be switched between absolute notation (i.e, note names) and relative notation (i.e., scale degrees) using the ‘a’ key. 
+  * Scale degrees are traditionally notated with a caret or “hat” above them, like $\hat{1}, \hat{2}, \hat{3}, \hat{4}, \hat{5}, \hat{6}, \hat{7}$.  
+  * Absolute note labels currently use **integer notation** (see image below) to label the black notes on the piano (so sorry) due to limited text space and also because I haven’t gotten around to discriminating between enharmonic equivalent notes (e.g., C# and Db, E# and F) based on scale/context.
 
+![integer_notation](https://raw.githubusercontent.com/briansgithub/music_visualizer/main/ReadMe%20Images/integer_notation.png)
 
 ## Instructions: 
 1. Upload a song to analyze using the "Choose File" button or select the "Default Song" button.
@@ -53,6 +57,7 @@ Absolute note labels currently include numbers for the black notes on the piano 
 5. A third slider is provided to make the notes in the cumulative bar graph stand out from each other more. 
 6. Click the key signature buttons to change the coloring of the notes displayed.  
 7. Explore the song using the mouse and keyboard shortcuts for the left hand. 
+8. Use 'q' to add markers to loop a section of the song to analyze.  
 
 ## Keyboard Shortcuts: 
 | Shortcut | Action |  
