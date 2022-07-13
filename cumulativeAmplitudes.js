@@ -1,7 +1,7 @@
 /// <reference path="./lib/p5.js" />
 /// <reference path="./lib/addons/p5.sound.js" />
 /// <reference path="./TSDef/p5.global-mode.d.ts" />
-/// <reference path="conversionsAndConstants.js" />
+/// <reference path="conversions_constants_helper_funcs.js" />
 /// <reference path="coloring.js" />
 /// <reference path="barObject.js" />
 "use strict";
@@ -30,7 +30,7 @@ function logCumulativeAmplitudes() {
         let relativeInterval = pitchClassToRelativeInterval(i);
         let brightness = 100;
 
-        const posX = (width / 2) * (1 + relativeInterval / 88);
+        const posX = ((2/3)*width) * (1 + relativeInterval / 88);
         const posY = height - 50;
 
         accumulatorObjs[relativeInterval] = new BarObject(i, barHeight, posX, posY, brightness);
@@ -50,12 +50,10 @@ function drawCumulativeAmplitudes() {
         textFont(projectFont);
         noStroke();
         fill('white');
-        textSize(7);
 
         textAlign(CENTER, CENTER);
         let pitchClass = accumulatorObjs[i].pitchClass;
-        let displaySymbol = radio_noteLabelingConvention.value() == 'absolute' ? numToSymbol(pitchClass) : specificIntervalToScaleDegree(mod(pitchClass - globalKeySigRoot, 12));
-        text(displaySymbol, accumulatorObjs[i].posX, height - 37);
+        displaySymbol(pitchClass, accumulatorObjs[i].posX, height - 37, 7, 'white');
         /*--- End Draw Pitch Class labels ---*/
     }
 }

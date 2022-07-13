@@ -5,6 +5,7 @@
 const intervalRatios = [1/1, 16/15, 9/8, 6/5, 5/4, 4/3, 45/32, 3/2, 8/5, 5/3, 9/5, 15/8];
 const intervalsOrderedByConsonance= [0, 10, 8, 5, 4, 2, 11, 1, 6, 3, 7, 9]; 
 const accidentalIntervals = [1, 3, 6, 8, 10];
+const diatonicIntervals = [0, 2, 4, 5, 7, 9, 11];
 
 /*
   COF := Circle of Fifths
@@ -41,110 +42,161 @@ function relativeIntervalToPitchClass(relativeInterval) {
 
 /* Translates a note from integer notation to the standard musical notation */
 function numToSymbol(noteNumber) {
-    let noteSymbol;
+    let noteSymbol, s;
     switch (noteNumber) {
         case 0:
-            noteSymbol = 'C';
+            s = 'C';
             break;
+        
         case 2:
-            noteSymbol = 'D';
+            s = 'D';
             break;
+       
         case 4:
-            noteSymbol = 'E';
+            s = 'E';
             break;
         case 5:
-            noteSymbol = 'F';
+            s = 'F';
             break;
+     
         case 7:
-            noteSymbol = 'G';
+            s = 'G';
             break;
+      
         case 9:
-            noteSymbol = 'A';
+            s = 'A';
             break;
+       
         case 11:
-            noteSymbol = 'B';
+            s = 'B';
             break;
         default:
-            noteSymbol = noteNumber;
+            s = noteNumber;
     }
-    return noteSymbol
+    return noteSymbol = s;
 }
 
 function specificIntervalToScaleDegree(semitones) {
-    let scaleDegree;
+    let scaleDegree, SD;
     switch (semitones) {
         case 0:
-            scaleDegree = '1';
+            SD = '1';
             break;
         case 2:
-            scaleDegree = '2';
+            SD = '2';
             break;
         case 4:
-            scaleDegree = '3';
+            SD = '3';
             break;
         case 5:
-            scaleDegree = '4';
+            SD = '4';
             break;
         case 7:
-            scaleDegree = '5';
+            SD = '5';
             break;
         case 9:
-            scaleDegree = '6';
+            SD = '6';
             break;
         case 11:
-            scaleDegree = '7';
+            SD = '7';
             break;
         default:
-            scaleDegree = "";
+            SD = "";
     }
-    return scaleDegree
+    return scaleDegree = SD;
 }
 
 function rootToKeySigSymbol(root) {
-    let noteSymbol;
+    let noteSymbol, s;
     switch (root) {
         case 0:
-            noteSymbol = 'C';
+            s = 'C';
             break;
         case 1:
-            noteSymbol = 'Db';
+            s = 'Db';
             break;
         case 2:
-            noteSymbol = 'D';
+            s = 'D';
             break;
         case 3:
-            noteSymbol = 'Eb';
+            s = 'Eb';
             break;
         case 4:
-            noteSymbol = 'E';
+            s = 'E';
             break;
         case 5:
-            noteSymbol = 'F';
+            s = 'F';
             break;
         case 6:
-            noteSymbol = 'F#';
+            s = 'F#';
             break;
         case 7:
-            noteSymbol = 'G';
+            s = 'G';
             break;
         case 8:
-            noteSymbol = 'Ab';
+            s = 'Ab';
             break;
         case 9:
-            noteSymbol = 'A';
+            s = 'A';
             break;
         case 10:
-            noteSymbol = 'Bb';
+            s = 'Bb';
             break;
         case 11:
-            noteSymbol = 'B';
+            s = 'B';
             break;
         default:
-            noteSymbol = root;
+            s = root;
     }
-    return noteSymbol
+    return noteSymbol = s;
 }
 
 function noteToFreq_(note) {
     return (440 * Math.pow(Math.pow(2, 1 / 12), note - 49));
 }
+
+function displaySymbol(pitchClass, xPos, yPos, size, color = 'black'){
+    textAlign(CENTER, CENTER);
+    textSize(size);
+    noStroke();
+    fill(color);
+    let relativeInterval = pitchClassToRelativeInterval(pitchClass);
+
+    if (radio_noteLabelingConvention.value() == 'absolute') {
+        textAlign(CENTER, CENTER);
+        text(numToSymbol(pitchClass), xPos, yPos);
+    }
+    else if (radio_noteLabelingConvention.value() == 'relative') {
+        const scaleDegree = specificIntervalToScaleDegree(mod(relativeInterval, 12));
+        if (scaleDegree) {
+            text(scaleDegree, xPos, yPos + .16 * size);
+            textAlign(CENTER, BASELINE);
+            text('^', xPos, yPos);
+        }
+    }
+}
+
+/* TODO: INFER CONTEXT OF ACCIDENTALS
+
+let diatonic_ring = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+let major_scale_offsets = [0, 2, 4, 5, 7, 9, 11];
+let added_accidentals = [11, 
+
+function scale_generator(int_root = 0, mode = 'ionian') {
+    let scale = [7];
+    for (let degree = 0; degree < scale.length(); degree++) {
+        scale[degree] = major_offsets[mod(degree + int_root, 12)];
+    }
+}
+
+//indexed 0-11 instead of -6 to +6
+//Gb over F# 
+let root_to_accidentals_LUT = [0, -5, 2, -3, 4, -1, -6, 1, -4, 3, -2, 5];
+
+function number_to_note(note_number, root = globalKeySigRoot, mode){
+    let note_letter = diatonic_ring[0];
+    if 
+
+}
+
+*/

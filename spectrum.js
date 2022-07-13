@@ -1,7 +1,7 @@
 /// <reference path="./lib/p5.js" />
 /// <reference path="./lib/addons/p5.sound.js" />
 /// <reference path="./TSDef/p5.global-mode.d.ts" />
-/// <reference path="conversionsAndConstants.js" />
+/// <reference path="conversions_constants_helper_fucs.js" />
 /// <reference path="coloring.js" />
 /// <reference path="barObject.js" />
 "use strict";
@@ -44,7 +44,7 @@ function logSpectrum() {
 
         let noteBrightness = map(Math.log2(freqVol), 0, 8, 0, 100); //freqVol ranges from 0 to 255
 
-        const posX = (width / 2 - 20) / 88 * conventionalNoteNum;
+        const posX = ((2/3) *width - 20) / 88 * conventionalNoteNum;
         const posY = height - 50;
 
         currentSpectrumBarObjs[i] = new BarObject(pitchClass, barHeight, posX, posY, noteBrightness);

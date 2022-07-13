@@ -1,6 +1,6 @@
 /// <reference path="./lib/p5.js" />
 /// <reference path="./TSDef/p5.global-mode.d.ts" />
-/// <reference path="conversionsAndConstants.js" />
+/// <reference path="conversions_constants_helper_funcs.js" />
 /// <reference path="coloring.js" />
 "use strict";
 "use strict";

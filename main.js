@@ -1,7 +1,7 @@
 /// <reference path="./lib/p5.js" />
 /// <reference path="./lib/addons/p5.sound.js" />
 /// <reference path="./TSDef/p5.global-mode.d.ts" />
-/// <reference path="conversionsAndConstants.js" />
+/// <reference path="conversions_constants_helper_funcs.js" />
 /// <reference path="volumeGraph.js" />
 /// <reference path="coloring.js" />
 /// <reference path="legend.js" />
@@ -11,15 +11,14 @@
 /// <reference path="controls.js" />
 /// <reference path="loopMarkers.js" />
 
-
-
 //TSDef provides typescript definitions for intellisense (function documentation, autocompletion)
 "use strict";
 
 let fromFile = true; 
 
 //-----------------------------------------------------------------------------
-let defaultBPM = 88;
+let songName = "Hikoukigumo.mp3";
+let defaultBPM = 88*2;
 let globalKeySigRoot = 3;
 function setGlobalKeySigRoot(n){
     globalKeySigRoot = n;
@@ -42,7 +41,6 @@ let button_Cb, button_Gb, button_Db, button_Ab, button_Eb, button_Bb, button_F, 
 let projectFont;
 
 let song;
-let songName = "Hikoukigumo.mp3";
 let songDuration;
 
 function preload() {
@@ -97,8 +95,8 @@ function toggleSong() { song.isPlaying() ? song.pause() : song.play(); }
 
 function loadDefaultSong() {
     song = loadSound(songName, songInit);
-    defaultBPM = 88;
-    globalKeySigRoot = 3;
+    defaultBPM;
+    globalKeySigRoot;
 }
 
 function songInit() {
@@ -325,27 +323,6 @@ function keySig11() { setGlobalKeySigRoot(11); }// B/Cb
 function toggleBeatDetection() {
     if (checkbox_beatDetect.checked()) {
     } else {
-    }
-}
-
-function displaySymbol(pitchClass, xPos, yPos, size, color = 'black'){
-    textAlign(CENTER,CENTER);
-    textSize(size);
-    noStroke();
-    fill(color);
-    let relativeInterval = pitchClassToRelativeInterval(pitchClass);
-
-    if (radio_noteLabelingConvention.value() == 'absolute') {
-        textAlign(CENTER, CENTER);
-        text(numToSymbol(pitchClass), xPos, yPos);
-    }
-    else if (radio_noteLabelingConvention.value() == 'relative') {
-        const scaleDegree = specificIntervalToScaleDegree(mod(relativeInterval, 12));
-        if (scaleDegree) {
-            text(scaleDegree, xPos, yPos + .16 * size);
-            textAlign(CENTER, BASELINE);
-            text('^', xPos, yPos);
-        }
     }
 }
 
